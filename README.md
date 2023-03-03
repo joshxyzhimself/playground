@@ -4,16 +4,17 @@
 
 #### Completed
 
-- None
+- HTTP Server serves bundled client correctly.
+- Docker HTTP Server serves bundled client correctly.
+- Docker serves Server and Client correctly.
 
 #### Planned / In Progress
 
-- Serve server in docker container.
-- Serve both client and server in docker container.
-- Image compression with Sharp.
-- Image serving with server.serve();
+- JWT HS256 Playground
+- HOTP TOTP Playground
 - Basic Authentication API with PostgreSQL and PostgREST.
 - Basic CRUD with PostgreSQL and PostgREST.
+- Image compression with Sharp, serving with server.serve();
 
 #### Under Review
 
