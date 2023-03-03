@@ -3,8 +3,10 @@ version: '3.8'
 services:
   postgresql:
     build:
-      context: ./ # path of parent directory
-      dockerfile: ./docker/postgresql/Dockerfile # path relative to context
+      # path of parent directory
+      context: ./
+      # path relative to context
+      dockerfile: ./docker/postgresql/Dockerfile
     restart: "no"
     network_mode: "host" # 5432
     command: postgres -c shared_preload_libraries=pgaudit,pgsodium
@@ -15,8 +17,8 @@ services:
       POSTGRES_HOST: localhost
       POSTGRES_PORT: 5432
     volumes:
-     - ./docker/volumes/postgresql/data:/var/lib/postgresql/data
-     - ./docker/postgresql/entrypoint:/docker-entrypoint-initdb.d
+      - ./docker/volumes/postgresql/data:/var/lib/postgresql/data
+      - ./docker/postgresql/entrypoint:/docker-entrypoint-initdb.d
     healthcheck:
       test: ["CMD-SHELL", "pg_isready --username=postgres"]
       interval: 10s
@@ -43,8 +45,12 @@ services:
 
   playground:
     build:
-      context: ./ # path of parent directory
-      dockerfile: ./Dockerfile # path relative to context
+      # path of parent directory
+      context: ./
+      # path relative to context
+      dockerfile: ./docker/playground/Dockerfile
     restart: "no"
     network_mode: "host" # 8080
     command: node ./index.mjs
+    depends_on:
+      - postgrest

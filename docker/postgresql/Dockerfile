@@ -53,7 +53,7 @@ RUN git clone https://github.com/michelp/pgsodium.git && \
     cd ./pgsodium/ && \
     make && \
     make install
-COPY ./postgresql/pgsodium/pgsodium_getkey_urandom.sh ./pgsodium_getkey_urandom.sh
+COPY ./docker/postgresql/pgsodium/pgsodium_getkey_urandom.sh ./pgsodium_getkey_urandom.sh
 RUN cp ./pgsodium_getkey_urandom.sh `pg_config --sharedir`/extension/pgsodium_getkey
 RUN chmod +x `pg_config --sharedir`/extension/pgsodium_getkey
 RUN chown postgres:postgres `pg_config --sharedir`/extension/pgsodium_getkey
