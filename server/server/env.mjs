@@ -1,10 +1,14 @@
 // @ts-check
 
 import fs from 'fs';
+import url from 'url';
 import path from 'path';
 import assert from 'assert';
 
-const env_path = path.join(process.cwd(), '.env');
+const __filename = url.fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const env_path = path.join(__dirname, '../.env');
 assert(fs.existsSync(env_path) === true);
 
 /**
