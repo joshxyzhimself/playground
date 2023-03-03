@@ -24,7 +24,7 @@ const on_exit = (callback) => {
    */
   const on_process_exit = (code) => {
     assert(typeof code === 'number');
-    console.log(`Playground: Process exit code: ${code}`);
+    console.log(`Playground: Process exit code ${code}`);
     callback();
   };
   process.on('SIGTERM', on_process_signal);

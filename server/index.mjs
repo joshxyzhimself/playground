@@ -1,9 +1,7 @@
 // @ts-check
 
-import fs from 'fs';
 import url from 'url';
 import path from 'path';
-import assert from 'assert';
 import * as server from './server/index.mjs';
 import on_exit from './server/on_exit.mjs';
 import env from './server/env.mjs';
@@ -14,15 +12,22 @@ const __dirname = path.dirname(__filename);
 console.log(env);
 
 const app = server.uws.App({});
- 
+
+server.serve({
+  app,
+  include: [{ url: '/', directory: path.join(__dirname, '../client/dist/'), use_cache: true }],
+  exclude: ['/api/'],
+  debug: true,
+});
+
 /**
  * Request Method: GET
- * Request URL Pathname: /
+ * Request URL Pathname: /example
  * Response Status: 200
  * Response Headers Content-Type: text/plain
  * CURL Test: curl http://localhost:8080/
  */
-app.get('/', server.use(async (response) => {
+app.get('/example', server.use(async (response) => {
   response.text = 'Hello world!';
 }));
 

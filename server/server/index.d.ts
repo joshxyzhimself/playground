@@ -118,12 +118,7 @@ export interface serve_options {
   /**
    * @description Your UWS Web Application.
    */
-  app: uws.TemplatedApp;
-  /**
-   * @description Default HTML file to serve.
-   * @example '/index.html'
-   */
-  index?: string;
+  app: uws.TemplatedApp; 
   /**
    * @description Included pairs of url prefix and local directory to be served.
    * @example [{ url: '/assets/', directory: path.join(process.cwd(), '/assets/') }]

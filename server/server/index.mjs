@@ -410,13 +410,8 @@ export const cors = (app) => {
  */
 export const serve = (serve_options) => {
   assert(serve_options instanceof Object);
-  const { app, index, include, exclude, debug } = serve_options;
+  const { app, include, exclude, debug } = serve_options;
   assert(app instanceof Object);
-  assert(typeof index === 'string' || typeof index === 'undefined');
-  if (typeof index === 'string') {
-    assert(fs.existsSync(index) === true);
-    assert(path.isAbsolute(index) === true);
-  }
   assert(include instanceof Array);
   include.forEach((entry) => {
     assert(entry instanceof Object);
@@ -437,10 +432,16 @@ export const serve = (serve_options) => {
 
   app.get('/*', (res, req) => {
     const request = {
-      url_pathname: req.getUrl(),
-      file_pathname: index || null,
+      url: req.getUrl(),
+      url_dirname: null,
+      url_basename: null,
+      url_extname: null,
+      file_pathname: null,
       headers: new InternalHeaders(),
     };
+    request.url_dirname = path.dirname(request.url);
+    request.url_basename = path.basename(request.url);
+    request.url_extname = path.extname(request.url);
     req.forEach((key, value) => {
       request.headers.set(key, value);
     });
@@ -455,7 +456,7 @@ export const serve = (serve_options) => {
       /**
        * @type {Map<string, string>}
        */
-      headers: new InternalHeaders([['Cache-Control', cache_control_types.no_store]]),
+      headers: new InternalHeaders([['Cache-Control', cache_control_types.no_cache]]),
       /**
        * @type {Buffer}
        */
@@ -479,15 +480,19 @@ export const serve = (serve_options) => {
     };
     for (let i = 0, l = exclude.length; i < l; i += 1) {
       const url_prefix = exclude[i];
-      if (request.url_pathname.startsWith(url_prefix) === true) {
+      if (request.url_dirname.startsWith(url_prefix) === true) {
         req.setYield(true);
         return;
       }
     }
     for (let i = 0, l = include.length; i < l; i += 1) {
       const record = include[i];
-      if (request.url_pathname.startsWith(record.url) === true) {
-        request.file_pathname = path.join(record.directory, request.url_pathname);
+      if (request.url_dirname.startsWith(record.url) === true) {
+        if (request.url_basename === '' || request.url_extname === '') {
+          request.url_basename = 'index.html';
+          request.url_extname = '.html';
+        }
+        request.file_pathname = path.join(record.directory, request.url_dirname, request.url_basename);
         if (record.headers instanceof Map) {
           record.headers.forEach((value, key) => {
             response.headers.set(key, value);
@@ -511,7 +516,7 @@ export const serve = (serve_options) => {
       const file_stat = fs.statSync(request.file_pathname);
       assert(file_stat.isFile() === true);
 
-      const file_name = path.basename(request.url_pathname);
+      const file_name = request.url_basename;
       const file_content_type = mime_types.contentType(file_name) || null;
 
       if (typeof file_content_type === 'string') {
@@ -580,6 +585,7 @@ export const serve = (serve_options) => {
 
       return;
     } catch (e) {
+      console.error(e);
       if (fs.existsSync(request.file_pathname) === true) {
         res.writeStatus('403');
         res.writeHeader('Content-Type', 'text/plain; charset=utf-8');

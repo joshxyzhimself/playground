@@ -67,7 +67,7 @@ const App = () => {
             playground
           </div>
           <div className="text-left text-xs font-normal text-slate-800">
-            example react projects
+            demo projects
           </div>
         </div>
       </div>
