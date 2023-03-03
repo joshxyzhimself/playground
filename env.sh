@@ -9,10 +9,19 @@ echo "--> Removing .env file."
 rm -f ./.env
 
 echo "--> Creating .env file."
-PLAYGROUND_BASE64_SECRET=$(openssl rand -base64 32)
-PLAYGROUND_HEX_SECRET=$(openssl rand -hex 32)
-echo "PLAYGROUND_BASE64_SECRET=$PLAYGROUND_BASE64_SECRET" >> .env
+PLAYGROUND_SECRET=$(openssl rand 32)
+PLAYGROUND_HEX_SECRET=$(echo -n "$PLAYGROUND_SECRET" | xxd -p -c 32)
+PLAYGROUND_BASE32_SECRET=$(echo -n "$PLAYGROUND_SECRET" | base32)
+PLAYGROUND_BASE64_SECRET=$(echo -n "$PLAYGROUND_SECRET" | base64)
 echo "PLAYGROUND_HEX_SECRET=$PLAYGROUND_HEX_SECRET" >> .env
+echo "PLAYGROUND_BASE32_SECRET=$PLAYGROUND_BASE32_SECRET" >> .env
+echo "PLAYGROUND_BASE64_SECRET=$PLAYGROUND_BASE64_SECRET" >> .env
+echo "POSTGRES_USER=postgres" >> .env
+echo "POSTGRES_PASSWORD=postgres" >> .env
+echo "PGRST_DB_SCHEMAS=public" >> .env
+echo "PGRST_DB_EXTRA_SEARCH_PATH=public" >> .env
+echo "PGRST_JWT_SECRET=$PLAYGROUND_BASE64_SECRET" >> .env
+echo "PGRST_JWT_SECRET_IS_BASE64=true" >> .env
 
 echo "--> Reading .env file."
 cat ./.env
