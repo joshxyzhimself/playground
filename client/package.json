@@ -1,0 +1,29 @@
+{
+  "name": "@joshxyzhimself/playground-client",
+  "version": "0.0.0",
+  "author": "joshxyzhimself <joshxyzhimself@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "vd": "npx vite dev --host=0.0.0.0 --port=9090",
+    "vb": "npx vite build",
+    "vbw": "npx vite build --watch --minify=false --sourcemap=true"
+  },
+  "dependencies": {
+    "@fontsource/inter": "^4.5.14",
+    "@heroicons/react": "^2.0.12",
+    "@stablelib/base64": "^1.0.1",
+    "@stablelib/hmac": "^1.0.1",
+    "@stablelib/sha256": "^1.0.1",
+    "@stablelib/utf8": "^1.0.1",
+    "@vitejs/plugin-react": "^3.0.1",
+    "autoprefixer": "^10.4.8",
+    "luxon": "^3.0.4",
+    "mime-types": "^2.1.35",
+    "node-fetch": "^3.2.10",
+    "postcss": "^8.4.16",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "tailwindcss": "^3.1.8",
+    "vite": "^4.0.4"
+  }
+}

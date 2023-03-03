@@ -1,0 +1,10 @@
+# sudo docker compose up --force-recreate --build
+version: '3.8'
+services:
+  functions-server:
+    build:
+      context: ./ # path of parent directory
+      dockerfile: ./Dockerfile # path relative to context
+    restart: "no"
+    network_mode: "host"
+    command: node ./index.mjs

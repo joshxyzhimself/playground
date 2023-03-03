@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+input {
+  @apply w-full p-1;
+  @apply bg-slate-50;
+  @apply ring-1 ring-slate-400;
+}
+input:focus {
+  @apply bg-white;
+  @apply ring-2 ring-slate-400;
+}
+button[type] {
+  @apply w-full p-1;
+  @apply bg-slate-900 text-white;
+  @apply text-center text-base font-medium;
+}
+button[type]:hover {
+  @apply bg-slate-800 text-slate-100;
+}
+* {
+  @apply appearance-none outline-none;
+}
+body {
+  font-family: 'Inter';
+}
