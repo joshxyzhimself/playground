@@ -1,11 +1,13 @@
 // @ts-check
 
 import React from 'react';
+import Link from '../components/Link';
 
 /**
  * @type {import('./Home').Home}
  */
-export const Home = () => {
+export const Home = (props) => {
+  const { history } = props;
   return (
     <div style={{ padding: 8 }}>
       <div className="p-4">
@@ -52,7 +54,10 @@ export const Home = () => {
           &bull; Bash Scripting - for generating secrets and environment files.
         </div>
         <div className="p-1 text-left text-base font-light">
-          Each project has a name, description, and list of technologies used.
+          Full open-source code is available online at:
+          <Link history={history} className="inline-text p-1 text-left text-base font-light underline" href="https://github.com/joshxyzhimself/playground" target="_blank">
+            https://github.com/joshxyzhimself/playground
+          </Link>
         </div>
         <div className="px-1 py-4">
           <hr />
