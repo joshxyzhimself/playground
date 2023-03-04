@@ -480,8 +480,20 @@ export const serve = (serve_options) => {
     };
     for (let i = 0, l = exclude.length; i < l; i += 1) {
       const url_prefix = exclude[i];
-      if (request.url_dirname.startsWith(url_prefix) === true) {
-        req.setYield(true);
+      if (request.url.startsWith(url_prefix) === true) {
+        /**
+         * Previously:
+         * - res.setYield(true);
+         * Replaced with:
+         * - 404
+         * Rationale:
+         * - For URL /api/example we hit the handlers: "/api/example" and "/*"
+         * - For URL /api/example2 we hit the handlers: "/*"
+         * - Conclusion: handler "/*" must 404 because it is our catch-all handler.
+         */
+        res.writeStatus('404');
+        res.write('404 Not Found');
+        res.end();
         return;
       }
     }
@@ -619,7 +631,5 @@ export const http = (app, port_access_type, port) => new Promise((resolve, rejec
     }
   });
 });
-
-export const helpers = { use, cors, serve, http };
 
 export { default as uws } from 'uWebSockets.js';

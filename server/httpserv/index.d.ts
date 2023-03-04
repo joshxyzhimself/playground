@@ -152,7 +152,7 @@ export const http: http;
 export type default_headers = Set<string>;
 export const default_headers: default_headers;
 
-export default interface server {
+export default interface httpserv {
   use: use;
   cors: cors;
   serve: serve;

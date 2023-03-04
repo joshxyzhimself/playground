@@ -2,57 +2,56 @@
 
 import url from 'url';
 import path from 'path';
-import * as server from './server/index.mjs';
-import on_exit from './server/on_exit.mjs';
-import env from './server/env.mjs';
+import * as httpserv from './httpserv/index.mjs';
+import on_exit from './httpserv/on_exit.mjs';
+import env from './httpserv/env.mjs';
 
 const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 console.log(env);
 
-const app = server.uws.App({});
+const app = httpserv.uws.App({});
 
-server.serve({
+httpserv.serve({
   app,
   include: [{ url: '/', directory: path.join(__dirname, '../client/dist/'), use_cache: true }],
   exclude: ['/api/'],
-  debug: true,
 });
 
 /**
  * Request Method: GET
- * Request URL Pathname: /example
+ * Request URL Pathname: /api/example
  * Response Status: 200
  * Response Headers Content-Type: text/plain
- * CURL Test: curl http://localhost:8080/
+ * CURL Test: curl http://localhost:8080/api/example
  */
-app.get('/example', server.use(async (response) => {
+app.get('/api/example', httpserv.use(async (response) => {
   response.text = 'Hello world!';
 }));
 
 /**
  * Request Method: POST
- * Request URL Pathname: /example
+ * Request URL Pathname: /api/example
  * Response Status: 200
  * Response Headers Content-Type: application/json
- * CURL Test: curl -X POST http://localhost:8080/example
+ * CURL Test: curl -X POST http://localhost:8080/api/example
  */
-app.post('/example', server.use(async (response, request) => {
+app.post('/api/example', httpserv.use(async (response, request) => {
   response.json = { request };
 }));
 
 const port = 8080;
 
 console.log(`Playground: Listening at port ${port}..`);
-const token = await server.http(app, server.port_access_types.EXCLUSIVE, port);
+const token = await httpserv.http(app, httpserv.port_access_types.EXCLUSIVE, port);
 
 console.log('Playground: Listen OK.');
 
 on_exit(() => {
 
   console.log('Playground: Closing sockets..');
-  server.uws.us_listen_socket_close(token);
+  httpserv.uws.us_listen_socket_close(token);
 
   console.log('Playground: Close sockets OK.');
 
