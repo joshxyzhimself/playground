@@ -15,10 +15,7 @@ export const Home = (props) => {
           Hi there, welcome to the playground.
         </div>
         <div className="p-1 text-left text-base font-light">
-          Here you will find mini projects that I&apos;ve crafted for demonstration purposes.
-        </div>
-        <div className="p-1 text-left text-base font-light">
-          Each project will have a name, description, and link.
+          Here you may find mini projects that I have crafted for demonstration purposes.
         </div>
         <div className="px-1 py-4">
           <hr />
