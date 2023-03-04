@@ -60,7 +60,7 @@ export const Home = (props) => {
           <hr />
         </div>
         <div className="p-1 text-left text-xs font-light">
-          Crafted with madness by @joshxyzhimself.
+          Crafted by @joshxyzhimself.
         </div>
       </div>
     </div>

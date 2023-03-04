@@ -13,6 +13,11 @@ export const Navigation = (props) => {
           Home
         </div>
       </Link>
+      <Link history={history} href="/dashboard">
+        <div className="navigation-button" tabIndex={-1}>
+          Dashboard
+        </div>
+      </Link>
       { typeof session === 'string' ? (
         <React.Fragment>
           <Link history={history} href="/example">
