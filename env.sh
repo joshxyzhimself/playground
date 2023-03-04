@@ -1,6 +1,13 @@
 #!/bin/bash
 # usage: bash ./env.sh
 
+PLAYGROUND_ENVIRONMENT="$1"
+
+if [ -z "$PLAYGROUND_ENVIRONMENT" ]; then
+    echo "You must provide the PLAYGROUND_ENVIRONMENT parameter ('development' or 'production')." 1>&2
+    exit 1
+fi
+
 echo "--> Removing .env file symlink."
 rm -f ./client/.env
 rm -f ./server/.env
@@ -13,6 +20,7 @@ PLAYGROUND_SECRET=$(openssl rand 32)
 PLAYGROUND_HEX_SECRET=$(echo -n "$PLAYGROUND_SECRET" | xxd -p -c 32)
 PLAYGROUND_BASE32_SECRET=$(echo -n "$PLAYGROUND_SECRET" | base32)
 PLAYGROUND_BASE64_SECRET=$(echo -n "$PLAYGROUND_SECRET" | base64)
+echo "PLAYGROUND_ENVIRONMENT=$PLAYGROUND_ENVIRONMENT" >> .env
 echo "PLAYGROUND_HEX_SECRET=$PLAYGROUND_HEX_SECRET" >> .env
 echo "PLAYGROUND_BASE32_SECRET=$PLAYGROUND_BASE32_SECRET" >> .env
 echo "PLAYGROUND_BASE64_SECRET=$PLAYGROUND_BASE64_SECRET" >> .env

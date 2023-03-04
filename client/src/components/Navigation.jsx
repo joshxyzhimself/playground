@@ -8,6 +8,11 @@ export const Navigation = (props) => {
   const { history, session, set_session } = props;
   return (
     <div className="m-2 p-2 border-y border-slate-200 flex flex-row justify-center items-center gap-2">
+      <Link history={history} href="/">
+        <div className="navigation-button" tabIndex={-1}>
+          Home
+        </div>
+      </Link>
       { typeof session === 'string' ? (
         <React.Fragment>
           <Link history={history} href="/example">

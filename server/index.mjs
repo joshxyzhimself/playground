@@ -15,7 +15,13 @@ const app = httpserv.uws.App({});
 
 httpserv.serve({
   app,
-  include: [{ url: '/', directory: path.join(__dirname, '../client/dist/'), use_cache: true }],
+  include: [
+    {
+      url: '/',
+      directory: path.join(__dirname, '../client/dist/'),
+      use_cache: env.get('PLAYGROUND_ENVIRONMENT') === 'production',
+    },
+  ],
   exclude: ['/api/'],
 });
 

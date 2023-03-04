@@ -20,6 +20,12 @@
 
 - None
 
+#### References
+
+- React Suspense
+  - https://reactjs.org/docs/react-api.html#reactsuspense
+  - https://beta.reactjs.org/reference/react/Suspense
+
 #### License
 
 MIT
