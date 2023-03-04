@@ -1,6 +1,9 @@
 # sudo docker compose up --force-recreate --build
+
 version: '3.8'
+
 services:
+
   postgresql:
     build:
       # path of parent directory
@@ -54,3 +57,15 @@ services:
     command: node ./index.mjs
     depends_on:
       - postgrest
+
+  caddy:
+    image: caddy:2
+    restart: "no"
+    network_mode: "host" # 80, 443, 443/udp
+    volumes:
+      - ./docker/volumes/caddy/data:/data
+      - ./docker/volumes/caddy/config:/config
+      - ./docker/volumes/caddy/logs:/var/log/caddy/
+      - ./docker/caddy/Caddyfile:/etc/caddy/Caddyfile
+    depends_on:
+      - playground
