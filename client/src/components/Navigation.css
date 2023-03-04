@@ -1,6 +1,6 @@
 .navigation-button {
   @apply p-1 bg-slate-100 rounded outline-none cursor-pointer;
-  @apply text-left text-xs font-normal text-slate-800;
+  @apply text-left text-xs font-medium text-slate-800;
 }
 .navigation-button:hover {
   @apply bg-slate-200 ;

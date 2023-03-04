@@ -63,15 +63,15 @@ const App = () => {
   return (
     <div className="App">
       <div className="m-4 flex flex-row justify-center items-center gap-2">
-        <svg className="h-12 w-12 text-slate-900" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 7.5l3 2.25-3 2.25m4.5 0h3m-9 8.25h13.5A2.25 2.25 0 0021 18V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v12a2.25 2.25 0 002.25 2.25z" />
+        <svg className="h-12 w-12 text-slate-800" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M21 7.5l-9-5.25L3 7.5m18 0l-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" />
         </svg>
         <div>
-          <div className="text-left text-2xl font-bold text-slate-900">
+          <div className="text-left text-2xl font-medium text-slate-900">
             playground
           </div>
-          <div className="text-left text-xs font-normal text-slate-800">
-            demo projects
+          <div className="text-left text-xs font-light text-slate-800">
+            prototypes you can play with
           </div>
         </div>
       </div>
