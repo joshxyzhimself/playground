@@ -14,6 +14,15 @@ export interface NetworkInfo {
   timezone: string;
 }
 
+export interface MarketCandle {
+  timestamp: number;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  volume: number;
+}
+
 export interface ExchangeRate {
   base: string;
   quote: string;
@@ -24,6 +33,7 @@ export interface ExchangeRate {
 
 export type NetworkInfoState = State<NetworkInfo>;
 export type ExchangeRatesState = State<ExchangeRate[]>;
+export type MarketCandlesState = State<MarketCandle[]>;
 
 export interface props {
   history: useHistory.history;

@@ -1,6 +1,7 @@
 // @ts-check
 
 import React from 'react';
+import ApexChart from 'react-apexcharts';
 import Spinner from '../components/Spinner';
 
 
@@ -14,18 +15,85 @@ export const Dashboard = (props) => {
    */
   const [network_info, set_network_info] = React.useState(null);
   /**
+   * @type {import('./Dashboard').MarketCandlesState}
+   */
+  const [market_candles, set_market_candles] = React.useState(null);
+  /**
    * @type {import('./Dashboard').ExchangeRatesState}
    */
-  const [exchange_rates, set_exchange_rates] = React.useState(null);
+  const [local_rates, set_local_rates] = React.useState(null);
   /**
    * @type {import('./Dashboard').State<string>}
    */
-  const [exchange_rate_filter, set_exchange_rate_filter] = React.useState('');
+  const [local_rate_filter, set_local_rate_filter] = React.useState('');
+  /**
+   * @type {import('./Dashboard').ExchangeRatesState}
+   */
+  const [forex_rates, set_forex_rates] = React.useState(null);
+  /**
+   * @type {import('./Dashboard').State<string>}
+   */
+  const [forex_rate_filter, set_forex_rate_filter] = React.useState('');
   React.useEffect(() => {
     queueMicrotask(async () => {
       const response = await fetch('https://ipinfo.io/json?token=24685cdbd4a1ac');
-      const response_json = await response.json();
-      set_network_info(response_json);
+      const data = await response.json();
+      set_network_info(data);
+    });
+    queueMicrotask(async () => {
+      // https://docs.cloud.coinbase.com/exchange/reference/exchangerestapi_getproductcandles
+      const response = await fetch('https://api.exchange.coinbase.com/products/BTC-USD/candles?granularity=86400');
+      const data = await response.json();
+      if (data instanceof Array) {
+        /**
+         * @type {import('./Dashboard').MarketCandle[]}
+         */
+        const next_market_candles = [];
+        data.forEach((item) => {
+          if (item instanceof Array && item.length === 6) {
+            const timestamp = item[0] * 1000;
+            const low = item[1];
+            const high = item[2];
+            const open = item[3];
+            const close = item[4];
+            const volume = item[5];
+            /**
+             * @type {import('./Dashboard').MarketCandle}
+             */
+            const market_candle = { timestamp, open, high, low, close, volume };
+            next_market_candles.push(market_candle);
+          }
+        });
+        // next_market_candles.reverse();
+        set_market_candles(next_market_candles.slice(0, 180));
+      }
+    });
+    queueMicrotask(async () => {
+      const response = await fetch('/api/coins-ph-markets');
+      const data = await response.json();
+      if (data instanceof Object) {
+        if (data.markets instanceof Array) {
+          /**
+           * @type {import('./Dashboard').ExchangeRate[]}
+           */
+          const next_local_rates = [];
+          data.markets.forEach((market) => {
+            if (market instanceof Object && typeof market.product === 'string') {
+              const base = market.product;
+              const quote = market.currency;
+              const bid = Number(market.bid);
+              const ask = Number(market.ask);
+              const mid = (bid + ask) / 2;
+              /**
+               * @type {import('./Dashboard').ExchangeRate}
+               */
+              const local_rate = { base, quote, mid };
+              next_local_rates.push(local_rate);
+            }
+          });
+          set_local_rates(next_local_rates);
+        }
+      }
     });
     queueMicrotask(async () => {
       const response = await fetch('https://openexchangerates.org/api/latest.json?prettyprint=false&app_id=647db71ea7d446d3a2bfa8b7fa18649c');
@@ -35,7 +103,7 @@ export const Dashboard = (props) => {
           /**
            * @type {import('./Dashboard').ExchangeRate[]}
            */
-          const next_exchange_rates = [];
+          const next_forex_rates = [];
           Array.from(Object.entries(data.rates)).forEach((entry) => {
             if (entry instanceof Object && typeof entry[0] === 'string' && typeof entry[1] === 'number') {
               const base = 'USD';
@@ -44,11 +112,11 @@ export const Dashboard = (props) => {
               /**
                * @type {import('./Dashboard').ExchangeRate}
                */
-              const exchange_rate = { base, quote, mid };
-              next_exchange_rates.push(exchange_rate);
+              const forex_rate = { base, quote, mid };
+              next_forex_rates.push(forex_rate);
             }
           });
-          set_exchange_rates(next_exchange_rates);
+          set_forex_rates(next_forex_rates);
         }
       }
     });
@@ -62,18 +130,18 @@ export const Dashboard = (props) => {
           Dashboard
         </div>
 
-        <div className="p-1 text-left text-base font-light">
-          Shows your current network information, and the latest intra-day mid-market exchange rates.
+        <div className="p-1 w-full sm:w-3/4 md:w-2/3 text-left text-base font-light">
+          Shows your current network information, the latest BTC-USD candlestick charts, and the latest intra-day mid-market exchange rates for both local crypto markets and foreign fiat markets
         </div>
 
         <div className="p-1 text-left text-xs font-light">
-          Uses third-party API&apos;s from IPInfo.io and OpenExchangeRates.org.
+          Uses third-party API&apos;s from IPInfo, Coinbase, Coins PH, and Open Exchange Rates.
         </div>
 
         <div className="p-1 flex flex-row justify-start items-start flex-wrap">
 
           <div className="p-1 h-full w-full md:w-1/3">
-            <div className="p-1 h-full bg-slate-50 rounded">
+            <div className="p-1 h-full bg-slate-50 border border-slate-400 rounded">
               <div className="p-1 text-left text-base font-normal">
                 Network Information
               </div>
@@ -81,103 +149,107 @@ export const Dashboard = (props) => {
               { network_info instanceof Object && (
                 <React.Fragment>
 
-                  <div className="w-full p-1">
-                    <div className="p-1 bg-slate-800 rounded" >
-                      <div className="ubuntu-mono text-right text-base font-normal text-white">
-                        { network_info.ip }
-                      </div>
-                      <div className="ubuntu-mono text-right text-xs font-light text-slate-50">
-                        IP Address
-                      </div>
-                    </div>
-                  </div>
+                  <div className="h-64 overflow-y-auto">
 
-                  <div className="w-full p-1">
-                    <div className="p-1 bg-slate-800 rounded" >
-                      <div className="ubuntu-mono text-right text-base font-normal text-white">
-                        { network_info.hostname }
-                      </div>
-                      <div className="ubuntu-mono text-right text-xs font-light text-slate-50">
-                        Host Name
+                    <div className="w-full p-1">
+                      <div className="p-1 bg-slate-800 rounded" >
+                        <div className="ubuntu-mono text-right text-base font-normal text-white">
+                          { network_info.ip }
+                        </div>
+                        <div className="ubuntu-mono text-right text-xs font-light text-slate-50">
+                          IP Address
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  <div className="w-full p-1">
-                    <div className="p-1 bg-slate-800 rounded" >
-                      <div className="ubuntu-mono text-right text-base font-normal text-white">
-                        { network_info.city }
-                      </div>
-                      <div className="ubuntu-mono text-right text-xs font-light text-slate-50">
-                        City
+                    <div className="w-full p-1">
+                      <div className="p-1 bg-slate-800 rounded" >
+                        <div className="ubuntu-mono text-right text-base font-normal text-white">
+                          { network_info.hostname }
+                        </div>
+                        <div className="ubuntu-mono text-right text-xs font-light text-slate-50">
+                          Host Name
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  <div className="w-full p-1">
-                    <div className="p-1 bg-slate-800 rounded" >
-                      <div className="ubuntu-mono text-right text-base font-normal text-white">
-                        { network_info.region }
-                      </div>
-                      <div className="ubuntu-mono text-right text-xs font-light text-slate-50">
-                        Region
+                    <div className="w-full p-1">
+                      <div className="p-1 bg-slate-800 rounded" >
+                        <div className="ubuntu-mono text-right text-base font-normal text-white">
+                          { network_info.city }
+                        </div>
+                        <div className="ubuntu-mono text-right text-xs font-light text-slate-50">
+                          City
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  <div className="w-full p-1">
-                    <div className="p-1 bg-slate-800 rounded" >
-                      <div className="ubuntu-mono text-right text-base font-normal text-white">
-                        { network_info.country }
-                      </div>
-                      <div className="ubuntu-mono text-right text-xs font-light text-slate-50">
-                        Country
+                    <div className="w-full p-1">
+                      <div className="p-1 bg-slate-800 rounded" >
+                        <div className="ubuntu-mono text-right text-base font-normal text-white">
+                          { network_info.region }
+                        </div>
+                        <div className="ubuntu-mono text-right text-xs font-light text-slate-50">
+                          Region
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  <div className="w-full p-1">
-                    <div className="p-1 bg-slate-800 rounded" >
-                      <div className="ubuntu-mono text-right text-base font-normal text-white">
-                        { network_info.loc }
-                      </div>
-                      <div className="ubuntu-mono text-right text-xs font-light text-slate-50">
-                        Location
+                    <div className="w-full p-1">
+                      <div className="p-1 bg-slate-800 rounded" >
+                        <div className="ubuntu-mono text-right text-base font-normal text-white">
+                          { network_info.country }
+                        </div>
+                        <div className="ubuntu-mono text-right text-xs font-light text-slate-50">
+                          Country
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  <div className="w-full p-1">
-                    <div className="p-1 bg-slate-800 rounded" >
-                      <div className="ubuntu-mono text-right text-base font-normal text-white">
-                        { network_info.org }
-                      </div>
-                      <div className="ubuntu-mono text-right text-xs font-light text-slate-50">
-                        Organization
+                    <div className="w-full p-1">
+                      <div className="p-1 bg-slate-800 rounded" >
+                        <div className="ubuntu-mono text-right text-base font-normal text-white">
+                          { network_info.loc }
+                        </div>
+                        <div className="ubuntu-mono text-right text-xs font-light text-slate-50">
+                          Location
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  <div className="w-full p-1">
-                    <div className="p-1 bg-slate-800 rounded" >
-                      <div className="ubuntu-mono text-right text-base font-normal text-white">
-                        { network_info.postal }
-                      </div>
-                      <div className="ubuntu-mono text-right text-xs font-light text-slate-50">
-                        Postal Code
+                    <div className="w-full p-1">
+                      <div className="p-1 bg-slate-800 rounded" >
+                        <div className="ubuntu-mono text-right text-base font-normal text-white">
+                          { network_info.org }
+                        </div>
+                        <div className="ubuntu-mono text-right text-xs font-light text-slate-50">
+                          Organization
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  <div className="w-full p-1">
-                    <div className="p-1 bg-slate-800 rounded" >
-                      <div className="ubuntu-mono text-right text-base font-normal text-white">
-                        { network_info.timezone }
-                      </div>
-                      <div className="ubuntu-mono text-right text-xs font-light text-slate-50">
-                        Time Zone
+                    <div className="w-full p-1">
+                      <div className="p-1 bg-slate-800 rounded" >
+                        <div className="ubuntu-mono text-right text-base font-normal text-white">
+                          { network_info.postal }
+                        </div>
+                        <div className="ubuntu-mono text-right text-xs font-light text-slate-50">
+                          Postal Code
+                        </div>
                       </div>
                     </div>
+
+                    <div className="w-full p-1">
+                      <div className="p-1 bg-slate-800 rounded" >
+                        <div className="ubuntu-mono text-right text-base font-normal text-white">
+                          { network_info.timezone }
+                        </div>
+                        <div className="ubuntu-mono text-right text-xs font-light text-slate-50">
+                          Time Zone
+                        </div>
+                      </div>
+                    </div>
+
                   </div>
 
                 </React.Fragment>
@@ -186,23 +258,55 @@ export const Dashboard = (props) => {
           </div>
 
           <div className="p-1 h-full w-full md:w-2/3">
-            <div className="p-1 h-full bg-slate-50 rounded">
+            <div className="p-1 h-full bg-slate-50 border border-slate-400 rounded">
               <div className="p-1 text-left text-base font-normal">
-                Exchange Rates
+                Coinbase BTC-USD 1D Chart
               </div>
-              { exchange_rates === null && (<Spinner />) }
-              { exchange_rates instanceof Object && (
+              { market_candles === null && (<Spinner />) }
+              { market_candles instanceof Object && (
+                <React.Fragment>
+                  <div className="h-64">
+                    <ApexChart
+                      options={{
+                        chart: { type: 'candlestick' },
+                        xaxis: { type: 'datetime' },
+                        yaxis: { tooltip: { enabled: true } },
+                      }}
+                      series={[{
+                        data: market_candles.map((candle) => {
+                          return {
+                            x: new Date(candle.timestamp),
+                            y: [candle.open, candle.high, candle.low, candle.close],
+                          };
+                        }),
+                      }]}
+                      type="candlestick"
+                      height='100%'
+                    />
+                  </div>
+                </React.Fragment>
+              ) }
+            </div>
+          </div>
+
+          <div className="p-1 h-full w-full md:w-1/2">
+            <div className="p-1 h-full bg-slate-50 border border-slate-400 rounded">
+              <div className="p-1 text-left text-base font-normal">
+                Local Crypto Exchange Rates
+              </div>
+              { local_rates === null && (<Spinner />) }
+              { local_rates instanceof Object && (
                 <React.Fragment>
                   <div className="p-1 text-left text-xs font-light">
-                    Intra-day mid-market rates with USD as base currency.
+                    Intra-day mid-market rates with PHP as quote currency.
                   </div>
                   <div className="p-1">
                     <div className="w-full">
                       <input
                         type="text"
-                        placeholder="Filter"
-                        value={exchange_rate_filter}
-                        onChange={(e) => set_exchange_rate_filter(e.target.value)}
+                        placeholder="Filter by base currency"
+                        value={local_rate_filter}
+                        onChange={(e) => set_local_rate_filter(e.target.value)}
                         autoCapitalize="off"
                         autoComplete="off"
                         spellCheck={false}
@@ -212,23 +316,83 @@ export const Dashboard = (props) => {
                     </div>
                   </div>
                   <div className="p-1 flex flex-row flex-wrap justify-start items-start">
-                    { exchange_rates.filter((exchange_rate) => {
-                      if (exchange_rate_filter.length > 0) {
-                        return exchange_rate.quote.toLowerCase().includes(exchange_rate_filter.toLowerCase()) === true;
-                      }
-                      return true;
-                    }).map((exchange_rate) => (
-                      <div className="w-full sm:w-1/3 md:w-1/4 lg:w-1/5 p-1" key={`exchange-rate-${exchange_rate.base}-${exchange_rate.quote}`}>
-                        <div className="p-1 bg-slate-800 rounded" >
-                          <div className="ubuntu-mono text-right text-base font-normal text-white">
-                            { exchange_rate.mid }
-                          </div>
-                          <div className="ubuntu-mono text-right text-xs font-light text-slate-50">
-                            { `${exchange_rate.base}/${exchange_rate.quote}` }
+                    { local_rates
+                      .filter((local_rate) => {
+                        if (local_rate.quote.toLowerCase() === 'php') {
+                          return true;
+                        }
+                        return false;
+                      })
+                      .filter((local_rate) => {
+                        if (local_rate_filter.length > 0) {
+                          return local_rate.base.toLowerCase().includes(local_rate_filter.toLowerCase()) === true;
+                        }
+                        return true;
+                      })
+                      .map((local_rate) => (
+                        <div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-1" key={`local_rate-${local_rate.base}-${local_rate.quote}`}>
+                          <div className="p-1 bg-slate-800 rounded" >
+                            <div className="ubuntu-mono text-right text-base font-normal text-white">
+                              { local_rate.mid }
+                            </div>
+                            <div className="ubuntu-mono text-right text-xs font-light text-slate-50">
+                              { `${local_rate.base}/${local_rate.quote}` }
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    )) }
+                      )) }
+                  </div>
+                </React.Fragment>
+              ) }
+            </div>
+          </div>
+
+          <div className="p-1 h-full w-full md:w-1/2">
+            <div className="p-1 h-full bg-slate-50 border border-slate-400 rounded">
+              <div className="p-1 text-left text-base font-normal">
+                Foreign Fiat Exchange Rates
+              </div>
+              { forex_rates === null && (<Spinner />) }
+              { forex_rates instanceof Object && (
+                <React.Fragment>
+                  <div className="p-1 text-left text-xs font-light">
+                    Intra-day mid-market rates with USD as base currency.
+                  </div>
+                  <div className="p-1">
+                    <div className="w-full">
+                      <input
+                        type="text"
+                        placeholder="Filter by quote currency"
+                        value={forex_rate_filter}
+                        onChange={(e) => set_forex_rate_filter(e.target.value)}
+                        autoCapitalize="off"
+                        autoComplete="off"
+                        spellCheck={false}
+                        autoFocus={false}
+                        required={false}
+                      />
+                    </div>
+                  </div>
+                  <div className="p-1 flex flex-row flex-wrap justify-start items-start">
+                    { forex_rates
+                      .filter((forex_rate) => {
+                        if (forex_rate_filter.length > 0) {
+                          return forex_rate.quote.toLowerCase().includes(forex_rate_filter.toLowerCase()) === true;
+                        }
+                        return true;
+                      })
+                      .map((forex_rate) => (
+                        <div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-1" key={`forex_rate-${forex_rate.base}-${forex_rate.quote}`}>
+                          <div className="p-1 bg-slate-800 rounded" >
+                            <div className="ubuntu-mono text-right text-base font-normal text-white">
+                              { forex_rate.mid }
+                            </div>
+                            <div className="ubuntu-mono text-right text-xs font-light text-slate-50">
+                              { `${forex_rate.base}/${forex_rate.quote}` }
+                            </div>
+                          </div>
+                        </div>
+                      )) }
                   </div>
                 </React.Fragment>
               ) }

@@ -338,6 +338,9 @@ export const use = (...middlewares) => {
       stream: null,
 
     };
+    res.onAborted(() => {
+      response.aborted = true;
+    });
     switch (request.method) {
       case 'post':
       case 'put':
@@ -364,9 +367,6 @@ export const use = (...middlewares) => {
             }
             process.nextTick(apply, res, middlewares, response, request);
           }
-        });
-        res.onAborted(() => {
-          response.aborted = true;
         });
         break;
       }

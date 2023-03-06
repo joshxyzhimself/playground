@@ -2,6 +2,7 @@
 
 import url from 'url';
 import path from 'path';
+import fetch from 'node-fetch';
 import * as httpserv from './httpserv/index.mjs';
 import on_exit from './httpserv/on_exit.mjs';
 import env from './httpserv/env.mjs';
@@ -24,6 +25,11 @@ httpserv.serve({
   ],
   exclude: ['/api/'],
 });
+
+app.get('/api/coins-ph-markets', httpserv.use(async (response) => {
+  const res = await fetch('https://quote.coins.ph/v2/markets');
+  response.json = await res.json();
+}));
 
 /**
  * Request Method: GET

@@ -29,7 +29,7 @@ export const Home = (props) => {
                   Dashboard
                 </div>
                 <div className="inter text-left text-sm font-light text-slate-50">
-                  Shows your current network information, and the latest intra-day mid-market exchange rates.
+                  Shows your current network information, the latest BTC-USD candlestick charts, and the latest intra-day mid-market exchange rates for both local crypto markets and foreign fiat markets.
                 </div>
               </div>
             </Link>
