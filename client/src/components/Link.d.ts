@@ -9,7 +9,6 @@ export interface props {
   href: string;
 }
 
-// eslint-disable-next-line no-unused-vars
 export type Link = (props: props) => JSX.Element;
 export const Link: Link;
 export default Link;
