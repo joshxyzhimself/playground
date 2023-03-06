@@ -105,7 +105,7 @@ export const Dashboard = (props) => {
             { exchange_rates instanceof Object && (
               <React.Fragment>
                 <div className="p-1 text-left text-xs font-light">
-                  Mid-market rates with USD as base currency.
+                  Intra-day mid-market rates with USD as base currency. Displayed below are quote currencies.
                 </div>
                 <div className="p-1">
                   <div className="w-full">
@@ -117,8 +117,8 @@ export const Dashboard = (props) => {
                       autoCapitalize="off"
                       autoComplete="off"
                       spellCheck={false}
-                      autoFocus={true}
-                      required={true}
+                      autoFocus={false}
+                      required={false}
                     />
                   </div>
                 </div>
@@ -129,12 +129,12 @@ export const Dashboard = (props) => {
                     }
                     return true;
                   }).map((exchange_rate) => (
-                    <div className="w-full md:w-1/3 p-1" key={`exchange-rate-${exchange_rate.base}-${exchange_rate.quote}`}>
-                      <div className="p-1 bg-slate-200 border border-slate-400 rounded" >
-                        <div className="text-right text-base font-normal">
+                    <div className="w-full sm:w-1/3 md:w-1/4 lg:w-1/5 p-1" key={`exchange-rate-${exchange_rate.base}-${exchange_rate.quote}`}>
+                      <div className="p-1 bg-slate-800 rounded" >
+                        <div className="ubuntu-mono text-right text-base font-normal text-white">
                           { exchange_rate.mid }
                         </div>
-                        <div className="text-right text-xs font-light">
+                        <div className="ubuntu-mono text-right text-xs font-light text-slate-50">
                           { exchange_rate.quote }
                         </div>
                       </div>

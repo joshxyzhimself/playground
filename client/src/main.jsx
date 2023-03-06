@@ -15,6 +15,8 @@ import '@fontsource/inter/600.css';
 import '@fontsource/inter/700.css';
 import '@fontsource/inter/800.css';
 import '@fontsource/inter/900.css';
+import '@fontsource/ubuntu-mono/400.css';
+import '@fontsource/ubuntu-mono/700.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

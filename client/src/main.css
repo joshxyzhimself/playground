@@ -23,5 +23,11 @@ button[type]:hover {
   @apply appearance-none outline-none;
 }
 body {
-  font-family: 'Inter';
+  font-family: "Inter", sans-serif;
+}
+.inter {
+  font-family: "Inter", sans-serif;
+}
+.ubuntu-mono {
+  font-family: "Ubuntu Mono", monospace;
 }
