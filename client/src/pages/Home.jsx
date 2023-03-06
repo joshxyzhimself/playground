@@ -11,12 +11,15 @@ export const Home = (props) => {
   return (
     <div style={{ padding: 8 }}>
       <div className="p-4">
+
         <div className="p-1 text-left text-2xl font-medium">
           Hi there, welcome to the playground.
         </div>
+
         <div className="p-1 text-left text-base font-light">
-          Here you may find mini projects that I have crafted for demonstration purposes.
+          Here you may find mini-projects that I have made for demonstration purposes.
         </div>
+
         <div className="flex flex-row flex-wrap justify-start items-start">
 
           <div className="w-full md:w-1/2 lg:w-1/3 p-1">
@@ -26,7 +29,7 @@ export const Home = (props) => {
                   Dashboard
                 </div>
                 <div className="inter text-left text-sm font-light text-slate-50">
-                  Displays your current network information, and the latest exchange rates.
+                  Shows your current network information, and the latest intra-day mid-market exchange rates.
                 </div>
               </div>
             </Link>

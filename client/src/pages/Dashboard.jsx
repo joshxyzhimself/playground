@@ -57,12 +57,22 @@ export const Dashboard = (props) => {
   return (
     <div style={{ padding: 8 }}>
       <div className="p-4">
+
         <div className="p-1 text-left text-2xl font-medium">
           Dashboard
         </div>
+
+        <div className="p-1 text-left text-base font-light">
+          Shows your current network information, and the latest intra-day mid-market exchange rates.
+        </div>
+
+        <div className="p-1 text-left text-xs font-light">
+          Uses third-party API&apos;s from IPInfo.io and OpenExchangeRates.org.
+        </div>
+
         <div className="p-1 flex flex-row justify-start items-start flex-wrap">
 
-          <div className="p-1 h-64 w-full md:w-1/3 overflow-y-auto">
+          <div className="p-1 h-full w-full md:w-1/3">
             <div className="p-1 h-full bg-slate-50 rounded">
               <div className="p-1 text-left text-base font-normal">
                 Network Information
@@ -70,39 +80,112 @@ export const Dashboard = (props) => {
               { network_info === null && (<Spinner />) }
               { network_info instanceof Object && (
                 <React.Fragment>
-                  <div className="px-1 text-left text-sm font-light">
-                    { `IP Address: ${network_info.ip}` }
+
+                  <div className="w-full p-1">
+                    <div className="p-1 bg-slate-800 rounded" >
+                      <div className="ubuntu-mono text-right text-base font-normal text-white">
+                        { network_info.ip }
+                      </div>
+                      <div className="ubuntu-mono text-right text-xs font-light text-slate-50">
+                        IP Address
+                      </div>
+                    </div>
                   </div>
-                  <div className="px-1 text-left text-sm font-light">
-                    { `Hostname: ${network_info.hostname}` }
+
+                  <div className="w-full p-1">
+                    <div className="p-1 bg-slate-800 rounded" >
+                      <div className="ubuntu-mono text-right text-base font-normal text-white">
+                        { network_info.hostname }
+                      </div>
+                      <div className="ubuntu-mono text-right text-xs font-light text-slate-50">
+                        Host Name
+                      </div>
+                    </div>
                   </div>
-                  <div className="px-1 text-left text-sm font-light">
-                    { `City: ${network_info.city}` }
+
+                  <div className="w-full p-1">
+                    <div className="p-1 bg-slate-800 rounded" >
+                      <div className="ubuntu-mono text-right text-base font-normal text-white">
+                        { network_info.city }
+                      </div>
+                      <div className="ubuntu-mono text-right text-xs font-light text-slate-50">
+                        City
+                      </div>
+                    </div>
                   </div>
-                  <div className="px-1 text-left text-sm font-light">
-                    { `Region: ${network_info.region}` }
+
+                  <div className="w-full p-1">
+                    <div className="p-1 bg-slate-800 rounded" >
+                      <div className="ubuntu-mono text-right text-base font-normal text-white">
+                        { network_info.region }
+                      </div>
+                      <div className="ubuntu-mono text-right text-xs font-light text-slate-50">
+                        Region
+                      </div>
+                    </div>
                   </div>
-                  <div className="px-1 text-left text-sm font-light">
-                    { `Country: ${network_info.country}` }
+
+                  <div className="w-full p-1">
+                    <div className="p-1 bg-slate-800 rounded" >
+                      <div className="ubuntu-mono text-right text-base font-normal text-white">
+                        { network_info.country }
+                      </div>
+                      <div className="ubuntu-mono text-right text-xs font-light text-slate-50">
+                        Country
+                      </div>
+                    </div>
                   </div>
-                  <div className="px-1 text-left text-sm font-light">
-                    { `Location: ${network_info.loc}` }
+
+                  <div className="w-full p-1">
+                    <div className="p-1 bg-slate-800 rounded" >
+                      <div className="ubuntu-mono text-right text-base font-normal text-white">
+                        { network_info.loc }
+                      </div>
+                      <div className="ubuntu-mono text-right text-xs font-light text-slate-50">
+                        Location
+                      </div>
+                    </div>
                   </div>
-                  <div className="px-1 text-left text-sm font-light">
-                    { `Organization: ${network_info.org}` }
+
+                  <div className="w-full p-1">
+                    <div className="p-1 bg-slate-800 rounded" >
+                      <div className="ubuntu-mono text-right text-base font-normal text-white">
+                        { network_info.org }
+                      </div>
+                      <div className="ubuntu-mono text-right text-xs font-light text-slate-50">
+                        Organization
+                      </div>
+                    </div>
                   </div>
-                  <div className="px-1 text-left text-sm font-light">
-                    { `Postal Code: ${network_info.postal}` }
+
+                  <div className="w-full p-1">
+                    <div className="p-1 bg-slate-800 rounded" >
+                      <div className="ubuntu-mono text-right text-base font-normal text-white">
+                        { network_info.postal }
+                      </div>
+                      <div className="ubuntu-mono text-right text-xs font-light text-slate-50">
+                        Postal Code
+                      </div>
+                    </div>
                   </div>
-                  <div className="px-1 text-left text-sm font-light">
-                    { `Time Zone: ${network_info.timezone}` }
+
+                  <div className="w-full p-1">
+                    <div className="p-1 bg-slate-800 rounded" >
+                      <div className="ubuntu-mono text-right text-base font-normal text-white">
+                        { network_info.timezone }
+                      </div>
+                      <div className="ubuntu-mono text-right text-xs font-light text-slate-50">
+                        Time Zone
+                      </div>
+                    </div>
                   </div>
+
                 </React.Fragment>
               ) }
             </div>
           </div>
 
-          <div className="p-1 h-64 w-full md:w-2/3 overflow-y-auto">
+          <div className="p-1 h-full w-full md:w-2/3">
             <div className="p-1 h-full bg-slate-50 rounded">
               <div className="p-1 text-left text-base font-normal">
                 Exchange Rates
@@ -111,7 +194,7 @@ export const Dashboard = (props) => {
               { exchange_rates instanceof Object && (
                 <React.Fragment>
                   <div className="p-1 text-left text-xs font-light">
-                    Intra-day mid-market rates with USD as base currency. Displayed below are quote currencies.
+                    Intra-day mid-market rates with USD as base currency.
                   </div>
                   <div className="p-1">
                     <div className="w-full">
@@ -128,7 +211,7 @@ export const Dashboard = (props) => {
                       />
                     </div>
                   </div>
-                  <div className="flex flex-row flex-wrap justify-start items-start">
+                  <div className="p-1 flex flex-row flex-wrap justify-start items-start">
                     { exchange_rates.filter((exchange_rate) => {
                       if (exchange_rate_filter.length > 0) {
                         return exchange_rate.quote.toLowerCase().includes(exchange_rate_filter.toLowerCase()) === true;
@@ -141,7 +224,7 @@ export const Dashboard = (props) => {
                             { exchange_rate.mid }
                           </div>
                           <div className="ubuntu-mono text-right text-xs font-light text-slate-50">
-                            { exchange_rate.quote }
+                            { `${exchange_rate.base}/${exchange_rate.quote}` }
                           </div>
                         </div>
                       </div>
