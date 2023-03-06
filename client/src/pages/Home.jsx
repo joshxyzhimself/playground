@@ -17,6 +17,22 @@ export const Home = (props) => {
         <div className="p-1 text-left text-base font-light">
           Here you may find mini projects that I have crafted for demonstration purposes.
         </div>
+        <div className="flex flex-row flex-wrap justify-start items-start">
+
+          <div className="w-full md:w-1/2 lg:w-1/3 p-1">
+            <Link history={history} href="/dashboard">
+              <div className="p-2 bg-slate-800 rounded" >
+                <div className="ubuntu-mono text-left text-xl font-normal text-white">
+                  Dashboard
+                </div>
+                <div className="inter text-left text-sm font-light text-slate-50">
+                  Displays your current network information, and the latest exchange rates.
+                </div>
+              </div>
+            </Link>
+          </div>
+
+        </div>
         <div className="px-1 py-4">
           <hr />
         </div>
