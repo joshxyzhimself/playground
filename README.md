@@ -11,6 +11,21 @@
  sudo sh get-docker.sh
  ```
 
+#### Generate and Link SSH Keys to your GitHub
+
+```sh
+ssh-keygen
+cat ~/.ssh/id_rsa.pub
+```
+
+- https://github.com/settings/keys
+
+#### Clone the repository
+
+```sh
+git clone git@github.com:joshxyzhimself/playground.git
+```
+
 #### Initialize environment file
 
 ```sh
