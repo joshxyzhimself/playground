@@ -94,7 +94,7 @@ export const JwtDecoder = (props) => {
         </div>
 
         <div className="p-1 w-full sm:w-3/4 md:w-2/3 text-left text-base font-light">
-          Decodes the header and payload from a JSON Web Token. Verifies the HS256 algorithm signature if base64-encoded secret is provided.
+          Decodes the header and payload from a JSON Web Token. Verifies the HS256 algorithm signature if the Base64-encoded secret is provided.
         </div>
 
         <div className="w-full flex flex-row flex-wrap justify-start items-start">

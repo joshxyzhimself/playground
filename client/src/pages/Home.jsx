@@ -55,7 +55,7 @@ export const Home = (props) => {
                   JWT Decoder
                 </div>
                 <div className="ubuntu-mono text-left text-sm font-light text-slate-50">
-                  Decodes the header and the payload from a JSON Web Token. Verifies the HS256 algorithm signature if base64-encoded secret is provided.
+                  Decodes the header and payload from a JSON Web Token. Verifies the HS256 algorithm signature if the Base64-encoded secret is provided.
                 </div>
               </div>
             </Link>
