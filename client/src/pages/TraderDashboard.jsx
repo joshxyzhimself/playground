@@ -127,7 +127,7 @@ export const TraderDashboard = (props) => {
       <div className="p-4">
 
         <div className="p-1 text-left text-2xl font-medium">
-          TraderDashboard
+          Trader Dashboard
         </div>
 
         <div className="p-1 w-full sm:w-3/4 md:w-2/3 text-left text-base font-light">
