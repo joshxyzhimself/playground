@@ -23,13 +23,13 @@ export const Home = (props) => {
         <div className="flex flex-row flex-wrap justify-start items-start">
 
           <div className="w-full md:w-1/2 lg:w-1/3 p-1">
-            <Link history={history} href="/dashboard">
+            <Link history={history} href="/trader-dashboard">
               <div className="p-2 bg-slate-800 rounded" >
                 <div className="ubuntu-mono text-left text-xl font-normal text-white">
-                  Dashboard
+                  Trader Dashboard
                 </div>
-                <div className="inter text-left text-sm font-light text-slate-50">
-                  Shows your current network information, the latest BTC-USD candlestick charts, and the latest intra-day mid-market exchange rates for both local crypto markets and foreign fiat markets.
+                <div className="ubuntu-mono text-left text-sm font-light text-slate-50">
+                  Shows your current network information, the latest BTC-USD candlestick charts, and the latest intra-day mid-market rates for both local crypto markets and foreign fiat markets.
                 </div>
               </div>
             </Link>

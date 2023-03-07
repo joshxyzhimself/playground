@@ -7,7 +7,7 @@ import * as hs256 from './modules/hs256.mjs';
 
 import Navigation from './components/Navigation';
 import Home from './pages/Home';
-import Dashboard from './pages/Dashboard';
+import TraderDashboard from './pages/TraderDashboard';
 import SignIn from './pages/SignIn';
 import Status403 from './pages/Status403';
 import Status404 from './pages/Status404';
@@ -22,8 +22,8 @@ const get_content = (history, session, set_session) => {
     case '/': {
       return (<Home history={history} />);
     }
-    case '/dashboard': {
-      return (<Dashboard history={history} />);
+    case '/trader-dashboard': {
+      return (<TraderDashboard history={history} />);
     }
     case '/sign-in': {
       if (typeof session === 'string') {

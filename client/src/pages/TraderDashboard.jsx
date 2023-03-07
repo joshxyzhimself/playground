@@ -6,32 +6,32 @@ import Spinner from '../components/Spinner';
 
 
 /**
- * @type {import('./Dashboard').Dashboard}
+ * @type {import('./TraderDashboard').TraderDashboard}
  */
-export const Dashboard = (props) => {
+export const TraderDashboard = (props) => {
   const { history } = props;
   /**
-   * @type {import('./Dashboard').NetworkInfoState}
+   * @type {import('./TraderDashboard').NetworkInfoState}
    */
   const [network_info, set_network_info] = React.useState(null);
   /**
-   * @type {import('./Dashboard').MarketCandlesState}
+   * @type {import('./TraderDashboard').MarketCandlesState}
    */
   const [market_candles, set_market_candles] = React.useState(null);
   /**
-   * @type {import('./Dashboard').ExchangeRatesState}
+   * @type {import('./TraderDashboard').ExchangeRatesState}
    */
   const [local_rates, set_local_rates] = React.useState(null);
   /**
-   * @type {import('./Dashboard').State<string>}
+   * @type {import('./TraderDashboard').State<string>}
    */
   const [local_rate_filter, set_local_rate_filter] = React.useState('');
   /**
-   * @type {import('./Dashboard').ExchangeRatesState}
+   * @type {import('./TraderDashboard').ExchangeRatesState}
    */
   const [forex_rates, set_forex_rates] = React.useState(null);
   /**
-   * @type {import('./Dashboard').State<string>}
+   * @type {import('./TraderDashboard').State<string>}
    */
   const [forex_rate_filter, set_forex_rate_filter] = React.useState('');
   React.useEffect(() => {
@@ -42,11 +42,11 @@ export const Dashboard = (props) => {
     });
     queueMicrotask(async () => {
       // https://docs.cloud.coinbase.com/exchange/reference/exchangerestapi_getproductcandles
-      const response = await fetch('https://api.exchange.coinbase.com/products/BTC-USD/candles?granularity=86400');
+      const response = await fetch('/api/btc-usd-candles');
       const data = await response.json();
       if (data instanceof Array) {
         /**
-         * @type {import('./Dashboard').MarketCandle[]}
+         * @type {import('./TraderDashboard').MarketCandle[]}
          */
         const next_market_candles = [];
         data.forEach((item) => {
@@ -58,7 +58,7 @@ export const Dashboard = (props) => {
             const close = item[4];
             const volume = item[5];
             /**
-             * @type {import('./Dashboard').MarketCandle}
+             * @type {import('./TraderDashboard').MarketCandle}
              */
             const market_candle = { timestamp, open, high, low, close, volume };
             next_market_candles.push(market_candle);
@@ -69,12 +69,12 @@ export const Dashboard = (props) => {
       }
     });
     queueMicrotask(async () => {
-      const response = await fetch('/api/coins-ph-markets');
+      const response = await fetch('/api/local-exchange-rates');
       const data = await response.json();
       if (data instanceof Object) {
         if (data.markets instanceof Array) {
           /**
-           * @type {import('./Dashboard').ExchangeRate[]}
+           * @type {import('./TraderDashboard').ExchangeRate[]}
            */
           const next_local_rates = [];
           data.markets.forEach((market) => {
@@ -85,7 +85,7 @@ export const Dashboard = (props) => {
               const ask = Number(market.ask);
               const mid = (bid + ask) / 2;
               /**
-               * @type {import('./Dashboard').ExchangeRate}
+               * @type {import('./TraderDashboard').ExchangeRate}
                */
               const local_rate = { base, quote, mid };
               next_local_rates.push(local_rate);
@@ -96,12 +96,12 @@ export const Dashboard = (props) => {
       }
     });
     queueMicrotask(async () => {
-      const response = await fetch('https://openexchangerates.org/api/latest.json?prettyprint=false&app_id=647db71ea7d446d3a2bfa8b7fa18649c');
+      const response = await fetch('/api/foreign-exchange-rates');
       const data = await response.json();
       if (data instanceof Object) {
         if (data.rates instanceof Object) {
           /**
-           * @type {import('./Dashboard').ExchangeRate[]}
+           * @type {import('./TraderDashboard').ExchangeRate[]}
            */
           const next_forex_rates = [];
           Array.from(Object.entries(data.rates)).forEach((entry) => {
@@ -110,7 +110,7 @@ export const Dashboard = (props) => {
               const quote = entry[0];
               const mid = entry[1];
               /**
-               * @type {import('./Dashboard').ExchangeRate}
+               * @type {import('./TraderDashboard').ExchangeRate}
                */
               const forex_rate = { base, quote, mid };
               next_forex_rates.push(forex_rate);
@@ -127,11 +127,11 @@ export const Dashboard = (props) => {
       <div className="p-4">
 
         <div className="p-1 text-left text-2xl font-medium">
-          Dashboard
+          TraderDashboard
         </div>
 
         <div className="p-1 w-full sm:w-3/4 md:w-2/3 text-left text-base font-light">
-          Shows your current network information, the latest BTC-USD candlestick charts, and the latest intra-day mid-market exchange rates for both local crypto markets and foreign fiat markets
+          Shows your current network information, the latest BTC-USD candlestick charts, and the latest intra-day mid-market rates for both local crypto markets and foreign fiat markets.
         </div>
 
         <div className="p-1 text-left text-xs font-light">
@@ -414,4 +414,4 @@ export const Dashboard = (props) => {
   );
 };
 
-export default Dashboard;
+export default TraderDashboard;

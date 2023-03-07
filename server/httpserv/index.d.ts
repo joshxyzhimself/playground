@@ -69,7 +69,8 @@ export interface request<T> {
   method: string;
   headers: InternalHeaders;
   search_params: InternalURLSearchParams;
-  ip_address: string;
+  remote_address: string;
+  proxied_remote_address: string;
   
   buffer: Buffer;
   json: T;

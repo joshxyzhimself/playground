@@ -13,9 +13,9 @@ export const Navigation = (props) => {
           Home
         </div>
       </Link>
-      <Link history={history} href="/dashboard">
+      <Link history={history} href="/trader-dashboard">
         <div className="navigation-button" tabIndex={-1}>
-          Dashboard
+          Trader Dashboard
         </div>
       </Link>
       { typeof session === 'string' ? (
