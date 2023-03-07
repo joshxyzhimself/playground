@@ -8,6 +8,7 @@ import * as hs256 from './modules/hs256.mjs';
 import Navigation from './components/Navigation';
 import Home from './pages/Home';
 import TraderDashboard from './pages/TraderDashboard';
+import JwtEncoder from './pages/JwtEncoder';
 import SignIn from './pages/SignIn';
 import Status403 from './pages/Status403';
 import Status404 from './pages/Status404';
@@ -24,6 +25,9 @@ const get_content = (history, session, set_session) => {
     }
     case '/trader-dashboard': {
       return (<TraderDashboard history={history} />);
+    }
+    case '/jwt-encoder': {
+      return (<JwtEncoder history={history} />);
     }
     case '/sign-in': {
       if (typeof session === 'string') {

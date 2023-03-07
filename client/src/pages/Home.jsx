@@ -35,6 +35,19 @@ export const Home = (props) => {
             </Link>
           </div>
 
+          <div className="w-full md:w-1/2 lg:w-1/3 p-1">
+            <Link history={history} href="/jwt-encoder">
+              <div className="p-2 bg-slate-800 rounded" >
+                <div className="ubuntu-mono text-left text-xl font-normal text-white">
+                  JWT Encoder
+                </div>
+                <div className="ubuntu-mono text-left text-sm font-light text-slate-50">
+                  Encodes header and payload into a JSON Web Token using HS256 algorithm.
+                </div>
+              </div>
+            </Link>
+          </div>
+
         </div>
         <div className="px-1 py-4">
           <hr />

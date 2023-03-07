@@ -18,6 +18,11 @@ export const Navigation = (props) => {
           Trader Dashboard
         </div>
       </Link>
+      <Link history={history} href="/jwt-encoder">
+        <div className="navigation-button" tabIndex={-1}>
+          JWT Encoder
+        </div>
+      </Link>
       { typeof session === 'string' ? (
         <React.Fragment>
           <Link history={history} href="/example">

@@ -6,13 +6,17 @@ import * as luxon from 'luxon';
 import * as hs256 from './hs256.mjs';
 
 {
+  const secret = hs256.create_secret(32);
+  console.log({ secret });
+}
+{
   try {
     const secret = crypto.randomBytes(32).toString('base64');
     const header = { alg: 'HS256', typ: 'JWT' };
     const payload = {
-      iat: luxon.DateTime.now().toSeconds(),
-      nbf: luxon.DateTime.now().plus({ hours: 1 }).toSeconds(),
-      exp: luxon.DateTime.now().plus({ hours: 6 }).toSeconds(),
+      iat: Math.trunc(luxon.DateTime.now().toSeconds()),
+      nbf: Math.trunc(luxon.DateTime.now().plus({ hours: 1 }).toSeconds()),
+      exp: Math.trunc(luxon.DateTime.now().plus({ hours: 6 }).toSeconds()),
       role: 'anon',
     };
     const token = hs256.create_token(header, payload, secret);
@@ -30,9 +34,9 @@ import * as hs256 from './hs256.mjs';
     const secret = crypto.randomBytes(32).toString('base64');
     const header = { alg: 'HS256', typ: 'JWT' };
     const payload = {
-      iat: luxon.DateTime.now().toSeconds(),
-      nbf: luxon.DateTime.now().toSeconds(),
-      exp: luxon.DateTime.now().minus({ hours: 6 }).toSeconds(),
+      iat: Math.trunc(luxon.DateTime.now().toSeconds()),
+      nbf: Math.trunc(luxon.DateTime.now().toSeconds()),
+      exp: Math.trunc(luxon.DateTime.now().minus({ hours: 6 }).toSeconds()),
       role: 'anon',
     };
     const token = hs256.create_token(header, payload, secret);
@@ -49,9 +53,9 @@ import * as hs256 from './hs256.mjs';
   const secret = crypto.randomBytes(32).toString('base64');
   const header = { alg: 'HS256', typ: 'JWT' };
   const payload = {
-    iat: luxon.DateTime.now().toSeconds(),
-    nbf: luxon.DateTime.now().toSeconds(),
-    exp: luxon.DateTime.now().plus({ hours: 6 }).toSeconds(),
+    iat: Math.trunc(luxon.DateTime.now().toSeconds()),
+    nbf: Math.trunc(luxon.DateTime.now().toSeconds()),
+    exp: Math.trunc(luxon.DateTime.now().plus({ hours: 6 }).toSeconds()),
     role: 'anon',
   };
   const token = hs256.create_token(header, payload, secret);

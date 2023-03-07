@@ -13,6 +13,7 @@ import * as hmac from '@stablelib/hmac';
 import * as utf8 from '@stablelib/utf8';
 import * as sha256 from '@stablelib/sha256';
 import * as base64 from '@stablelib/base64';
+import * as random from '@stablelib/random';
 import * as luxon from 'luxon';
 
 /**
@@ -151,3 +152,9 @@ export const verify_sig = (token, secret) => {
   }
   return { header, payload };
 };
+
+/**
+ * @param {number} length
+ * @returns {string}
+ */
+export const create_secret = (length) => base64.encode(random.randomBytes(length));

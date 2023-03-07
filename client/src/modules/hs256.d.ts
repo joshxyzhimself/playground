@@ -90,10 +90,6 @@ export interface payload {
    * refresh token
    */
   refresh_token?: string;
-  /**
-   * typesense token
-   */
-  typesense_token?: string;
 
 }
 
