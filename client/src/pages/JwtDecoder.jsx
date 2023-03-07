@@ -4,7 +4,6 @@ import React from 'react';
 import Editor from '@monaco-editor/react';
 import * as luxon from 'luxon';
 import * as hs256 from '../modules/hs256.mjs';
-import assert from '../modules/assert.mjs';
 
 /**
  * @type {import('../modules/hs256').header}
@@ -24,28 +23,28 @@ const default_payload = {
 };
 
 /**
- * @type {import('./JwtEncoder').JwtEncoder}
+ * @type {import('./JwtDecoder').JwtDecoder}
  */
-export const JwtEncoder = (props) => {
+export const JwtDecoder = (props) => {
   const { history } = props;
 
   /**
-   * @type {import('./JwtEncoder').State<string>}
+   * @type {import('./JwtDecoder').State<string>}
    */
   const [secret, set_secret] = React.useState('');
 
   /**
-   * @type {import('./JwtEncoder').State<string>}
+   * @type {import('./JwtDecoder').State<string>}
    */
   const [header, set_header] = React.useState('');
 
   /**
-   * @type {import('./JwtEncoder').State<string>}
+   * @type {import('./JwtDecoder').State<string>}
    */
   const [payload, set_payload] = React.useState('');
 
   /**
-   * @type {import('./JwtEncoder').State<string>}
+   * @type {import('./JwtDecoder').State<string>}
    */
   const [token, set_token] = React.useState('');
 
@@ -56,64 +55,61 @@ export const JwtEncoder = (props) => {
 
   React.useEffect(() => {
     const next_secret = hs256.create_secret(32);
-    const next_header = JSON.stringify(default_header, null, 2);
-    const next_payload = JSON.stringify(default_payload, null, 2);
+    const next_token = hs256.create_token(default_header, default_payload, next_secret);
     set_secret(next_secret);
-    set_header(next_header);
-    set_payload(next_payload);
+    set_token(next_token);
   }, []);
 
   React.useEffect(() => {
     try {
-      if (secret.length > 0) {
-        if (header.length > 0) {
-          /**
-           * @type {import('../modules/hs256').header}
-           */
-          const header_data = JSON.parse(header);
-          assert(header_data.alg === 'HS256', 'Only alg=HS256 is supported.');
-          assert(header_data.typ === 'JWT', 'Only typ=JWT is supported.');
-          if (payload.length > 0) {
-            const next_token = hs256.create_token(JSON.parse(header), JSON.parse(payload), secret);
-            set_token(next_token);
-            set_message('JWT Encode OK.');
-            return;
+      if (token.length > 0) {
+        const token_data = hs256.read_token(token);
+        set_header(JSON.stringify(token_data.header, null, 2));
+        set_payload(JSON.stringify(token_data.payload, null, 2));
+        set_message('JWT Decode OK.');
+        if (secret.length > 0) {
+          try {
+            hs256.verify_sig(token, secret);
+            set_message('JWT Decode OK. JWT Signature Verification OK.');
+          } catch (e) {
+            console.error(e);
+            set_message(`JWT Decode OK. JWT Signature Verification Error: ${e.message}`);
           }
         }
       }
-      set_message('');
     } catch (e) {
       console.error(e);
-      set_token('');
-      set_message(`JWT Encode Error: ${e.message}`);
+      set_header('');
+      set_payload('');
+      set_message(`JWT Decode Error: ${e.message}`);
     }
-  }, [secret, header, payload]);
+  }, [token, secret]);
 
   return (
     <div style={{ padding: 8 }}>
       <div className="p-4">
 
         <div className="p-1 text-left text-2xl font-medium">
-          JWT Encoder
+          JWT Decoder
         </div>
 
         <div className="p-1 w-full sm:w-3/4 md:w-2/3 text-left text-base font-light">
-          Encodes the header and the payload into a JSON Web Token using the HS256 algorithm.
+          Decodes the header and payload from a JSON Web Token. Verifies the HS256 algorithm signature if base64-encoded secret is provided.
         </div>
 
         <div className="w-full flex flex-row flex-wrap justify-start items-start">
 
           <div className="p-1 w-full">
             <div className="py-1 text-left text-base font-medium">
-              Secret (Base64-encoded)
+              Token
             </div>
-            <div className="h-16 w-full">
+            <div className="h-24 w-full">
               <Editor
                 theme="vs-dark"
                 defaultLanguage="text"
-                value={secret}
+                value={token}
                 onChange={(value) => {
-                  set_secret(value);
+                  set_token(value);
                 }}
                 options={{ minimap: { enabled: false }, wordWrap: 'on' }}
               />
@@ -143,24 +139,24 @@ export const JwtEncoder = (props) => {
                 theme="vs-dark"
                 defaultLanguage="json"
                 value={payload}
-                onChange={(value) => {
-                  set_payload(value);
-                }}
-                options={{ minimap: { enabled: false } }}
+                options={{ minimap: { enabled: false }, readOnly: true }}
               />
             </div>
           </div>
 
           <div className="p-1 w-full">
             <div className="py-1 text-left text-base font-medium">
-              Token
+              Secret (Base64-encoded)
             </div>
-            <div className="h-24 w-full">
+            <div className="h-16 w-full">
               <Editor
                 theme="vs-dark"
                 defaultLanguage="text"
-                value={token}
-                options={{ minimap: { enabled: false }, readOnly: true, wordWrap: 'on' }}
+                value={secret}
+                onChange={(value) => {
+                  set_secret(value);
+                }}
+                options={{ minimap: { enabled: false }, wordWrap: 'on' }}
               />
             </div>
             { message.includes('Error') === false && (
@@ -190,4 +186,4 @@ export const JwtEncoder = (props) => {
   );
 };
 
-export default JwtEncoder;
+export default JwtDecoder;

@@ -42,7 +42,20 @@ export const Home = (props) => {
                   JWT Encoder
                 </div>
                 <div className="ubuntu-mono text-left text-sm font-light text-slate-50">
-                  Encodes header and payload into a JSON Web Token using HS256 algorithm.
+                  Encodes the header and the payload into a JSON Web Token using the HS256 algorithm.
+                </div>
+              </div>
+            </Link>
+          </div>
+
+          <div className="w-full md:w-1/2 lg:w-1/3 p-1">
+            <Link history={history} href="/jwt-decoder">
+              <div className="p-2 bg-slate-800 rounded" >
+                <div className="ubuntu-mono text-left text-xl font-normal text-white">
+                  JWT Decoder
+                </div>
+                <div className="ubuntu-mono text-left text-sm font-light text-slate-50">
+                  Decodes the header and the payload from a JSON Web Token. Verifies the HS256 algorithm signature if base64-encoded secret is provided.
                 </div>
               </div>
             </Link>

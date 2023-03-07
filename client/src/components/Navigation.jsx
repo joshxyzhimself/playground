@@ -23,6 +23,11 @@ export const Navigation = (props) => {
           JWT Encoder
         </div>
       </Link>
+      <Link history={history} href="/jwt-decoder">
+        <div className="navigation-button" tabIndex={-1}>
+          JWT Decoder
+        </div>
+      </Link>
       { typeof session === 'string' ? (
         <React.Fragment>
           <Link history={history} href="/example">
