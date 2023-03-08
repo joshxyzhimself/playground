@@ -13,7 +13,7 @@ export const Home = (props) => {
       <div className="p-4">
 
         <div className="p-1 text-left text-2xl font-medium">
-          Hi there, welcome to the playground.
+          Hello there!
         </div>
 
         <div className="p-1 text-left text-base font-light">
@@ -96,10 +96,11 @@ export const Home = (props) => {
           &bull; Bash Scripting - for generating secrets and environment files.
         </div>
         <div className="p-1 text-left text-base font-light">
-          Full open-source code is available online at:
+          Full open-source code is available online at
           <Link history={history} className="inline-text p-1 text-left text-base font-light underline" href="https://github.com/joshxyzhimself/playground" target="_blank">
-            https://github.com/joshxyzhimself/playground
+            GitHub
           </Link>
+          .
         </div>
         <div className="px-1 py-4">
           <hr />

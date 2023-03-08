@@ -7,54 +7,19 @@ import './Navigation.css';
 export const Navigation = (props) => {
   const { history, session, set_session } = props;
   return (
-    <div className="m-2 p-2 border-y border-slate-200 flex flex-row justify-center items-center gap-2">
-      <Link history={history} href="/">
-        <div className="navigation-button" tabIndex={-1}>
-          Home
-        </div>
+    <div className="m-2 p-2 border-y border-slate-200 flex flex-row flex-wrap justify-center items-center gap-2">
+      <Link className="navigation-button" history={history} href="/">
+        Home
       </Link>
-      <Link history={history} href="/trader-dashboard">
-        <div className="navigation-button" tabIndex={-1}>
-          Trader Dashboard
-        </div>
+      <Link className="navigation-button" history={history} href="/trader-dashboard">
+        Trader Dashboard
       </Link>
-      <Link history={history} href="/jwt-encoder">
-        <div className="navigation-button" tabIndex={-1}>
-          JWT Encoder
-        </div>
+      <Link className="navigation-button" history={history} href="/jwt-encoder">
+        JWT Encoder
       </Link>
-      <Link history={history} href="/jwt-decoder">
-        <div className="navigation-button" tabIndex={-1}>
-          JWT Decoder
-        </div>
+      <Link className="navigation-button" history={history} href="/jwt-decoder">
+        JWT Decoder
       </Link>
-      { typeof session === 'string' ? (
-        <React.Fragment>
-          <Link history={history} href="/example">
-            <div className="navigation-button" tabIndex={-1}>
-              Example
-            </div>
-          </Link>
-          <div
-            className="navigation-button"
-            tabIndex={-1}
-            onClick={() => {
-              history.push('/sign-in');
-              set_session(null);
-            }}
-          >
-            Sign out
-          </div>
-        </React.Fragment>
-      ) : (
-        <React.Fragment>
-          <Link history={history} href="/sign-in">
-            <div className="navigation-button" tabIndex={-1}>
-              Sign in
-            </div>
-          </Link>
-        </React.Fragment>
-      ) }
     </div>
   );
 };
