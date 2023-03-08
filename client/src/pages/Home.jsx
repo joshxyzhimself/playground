@@ -61,6 +61,19 @@ export const Home = (props) => {
             </Link>
           </div>
 
+          <div className="w-full md:w-1/2 lg:w-1/3 p-1">
+            <Link history={history} href="/image-uploader">
+              <div className="p-2 bg-slate-800 rounded" >
+                <div className="ubuntu-mono text-left text-xl font-normal text-white">
+                  Image Uploader
+                </div>
+                <div className="ubuntu-mono text-left text-sm font-light text-slate-50">
+                  Anonymous image uploader supporting modern image formats. Applies MozJPEG which improves JPEG compression efficiency achieving higher visual quality and smaller file sizes at the same time.
+                </div>
+              </div>
+            </Link>
+          </div>
+
         </div>
         <div className="px-1 py-4">
           <hr />

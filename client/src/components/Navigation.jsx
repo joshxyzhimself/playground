@@ -20,6 +20,9 @@ export const Navigation = (props) => {
       <Link className="navigation-button" history={history} href="/jwt-decoder">
         JWT Decoder
       </Link>
+      <Link className="navigation-button" history={history} href="/image-uploader">
+        Image Uploader
+      </Link>
     </div>
   );
 };
