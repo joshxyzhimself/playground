@@ -16,9 +16,10 @@ console.log(env);
 const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const __temp = path.join(__dirname, '/temp/');
+const __images = path.join(__temp, '/images');
 
-if (fs.existsSync(__temp) === false) {
-  fs.mkdirSync(__temp);
+if (fs.existsSync(__images) === false) {
+  fs.mkdirSync(__images, { recursive: true });
 }
 
 const one_second = 1000;
@@ -50,8 +51,14 @@ httpserv.serve({
       directory: path.join(__dirname, '../client/dist/'),
       use_cache: env.get('PLAYGROUND_ENVIRONMENT') === 'production',
     },
+    {
+      url: '/images',
+      directory: __temp,
+      use_cache: env.get('PLAYGROUND_ENVIRONMENT') === 'production',
+    },
   ],
   exclude: ['/api/'],
+  debug: true,
 });
 
 app.get('/api/trader-dashboard/btc-usd-candles', httpserv.use(async (response, request) => {
@@ -93,8 +100,6 @@ app.get('/api/trader-dashboard/foreign-exchange-rates', httpserv.use(async (resp
   response.json = item.data;
 }));
 
-
-
 app.post('/api/image-uploader/images', httpserv.use(async (response, request) => {
   console.log(request);
   console.log(request.parts);
@@ -105,12 +110,15 @@ app.post('/api/image-uploader/images', httpserv.use(async (response, request) =>
   const converted_buffer = await sharp(file_buffer).jpeg({ mozjpeg: true }).toBuffer();
   const converted_metadata = await sharp(converted_buffer).metadata();
   const converted_hash = crypto.createHash('sha224').update(converted_buffer).digest('hex');
-  console.log({ file_metadata, converted_metadata, converted_hash });
+  const converted_basename = converted_hash.concat('.', converted_metadata.format);
+  const converted_path = path.join(__images, converted_basename);
+  const converted_url = path.join('/images/', converted_basename);
+  if (fs.existsSync(converted_path) === false) {
+    fs.writeFileSync(converted_path, converted_buffer);
+  }
+  console.log({ file_metadata, converted_metadata, converted_hash, converted_basename, converted_path, converted_url });
   response.json = { file_metadata, converted_metadata, converted_hash };
 }));
-
-
-
 
 /**
  * Request Method: GET

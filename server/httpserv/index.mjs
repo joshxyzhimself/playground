@@ -414,17 +414,33 @@ export const serve = (serve_options) => {
   const { app, include, exclude, debug } = serve_options;
   assert(app instanceof Object);
   assert(include instanceof Array);
-  include.forEach((entry) => {
-    assert(entry instanceof Object);
-    assert(typeof entry.url === 'string');
-    assert(typeof entry.directory === 'string');
-    assert(fs.existsSync(entry.directory) === true);
-    assert(path.isAbsolute(entry.directory) === true);
-    const entry_directory_stat = fs.statSync(entry.directory);
+  include.forEach((record) => {
+    assert(record instanceof Object);
+    assert(typeof record.url === 'string');
+    assert(typeof record.directory === 'string');
+    assert(fs.existsSync(record.directory) === true);
+    assert(path.isAbsolute(record.directory) === true);
+    const entry_directory_stat = fs.statSync(record.directory);
     assert(entry_directory_stat.isDirectory() === true);
   });
   assert(exclude instanceof Array);
   assert(typeof debug === 'boolean' || typeof debug === 'undefined');
+
+  /**
+   * Normalizes the URLs. Mutates "/images/" into "/images"
+   */
+  include.forEach((record) => {
+    if (record.url.length > 1) {
+      if (record.url.endsWith('/') === true) {
+        record.url = record.url.substring(0, record.url.length - 1);
+      }
+    }
+  });
+
+  /**
+   * Sorts the URLs. "/images" first, "/" last.
+   */
+  include.sort((a, b) => b.url.length - a.url.length);
 
   /**
    * @type {Map<string, import('./index').serve_cache_record>}
