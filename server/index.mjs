@@ -1,16 +1,25 @@
 // @ts-check
 
+import fs from 'fs';
 import url from 'url';
 import path from 'path';
+import assert from 'assert';
+import crypto from 'crypto';
+import sharp from 'sharp';
 import fetch from 'node-fetch';
 import * as httpserv from './httpserv/index.mjs';
 import on_exit from './httpserv/on_exit.mjs';
 import env from './httpserv/env.mjs';
 
+console.log(env);
+
 const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const __temp = path.join(__dirname, '/temp/');
 
-console.log(env);
+if (fs.existsSync(__temp) === false) {
+  fs.mkdirSync(__temp);
+}
 
 const one_second = 1000;
 const one_minute = 60 * one_second;
@@ -45,7 +54,7 @@ httpserv.serve({
   exclude: ['/api/'],
 });
 
-app.get('/api/btc-usd-candles', httpserv.use(async (response, request) => {
+app.get('/api/trader-dashboard/btc-usd-candles', httpserv.use(async (response, request) => {
   const external_api_url = 'https://api.exchange.coinbase.com/products/BTC-USD/candles?granularity=86400';
   if (cache.has(external_api_url) === false) {
     console.log(`Playground: External API data cached for "${external_api_url}".`);
@@ -57,7 +66,8 @@ app.get('/api/btc-usd-candles', httpserv.use(async (response, request) => {
   const item = cache.get(external_api_url);
   response.json = item.data;
 }));
-app.get('/api/local-exchange-rates', httpserv.use(async (response, request) => {
+
+app.get('/api/trader-dashboard/local-exchange-rates', httpserv.use(async (response, request) => {
   const external_api_url = 'https://quote.coins.ph/v2/markets';
   if (cache.has(external_api_url) === false) {
     console.log(`Playground: External API data cached for "${external_api_url}".`);
@@ -69,7 +79,8 @@ app.get('/api/local-exchange-rates', httpserv.use(async (response, request) => {
   const item = cache.get(external_api_url);
   response.json = item.data;
 }));
-app.get('/api/foreign-exchange-rates', httpserv.use(async (response, request) => {
+
+app.get('/api/trader-dashboard/foreign-exchange-rates', httpserv.use(async (response, request) => {
   const external_api_url = 'https://openexchangerates.org/api/latest.json?prettyprint=false&app_id=647db71ea7d446d3a2bfa8b7fa18649c';
   if (cache.has(external_api_url) === false) {
     console.log(`Playground: External API data cached for "${external_api_url}".`);
@@ -81,6 +92,25 @@ app.get('/api/foreign-exchange-rates', httpserv.use(async (response, request) =>
   const item = cache.get(external_api_url);
   response.json = item.data;
 }));
+
+
+
+app.post('/api/image-uploader/images', httpserv.use(async (response, request) => {
+  console.log(request);
+  console.log(request.parts);
+  assert(request.parts.length > 0);
+  const file = request.parts[0];
+  const file_buffer = new Uint8Array(file.data);
+  const file_metadata = await sharp(file_buffer).metadata();
+  const converted_buffer = await sharp(file_buffer).jpeg({ mozjpeg: true }).toBuffer();
+  const converted_metadata = await sharp(converted_buffer).metadata();
+  const converted_hash = crypto.createHash('sha224').update(converted_buffer).digest('hex');
+  console.log({ file_metadata, converted_metadata, converted_hash });
+  response.json = { file_metadata, converted_metadata, converted_hash };
+}));
+
+
+
 
 /**
  * Request Method: GET

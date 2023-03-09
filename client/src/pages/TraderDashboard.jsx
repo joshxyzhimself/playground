@@ -42,7 +42,7 @@ export const TraderDashboard = (props) => {
     });
     queueMicrotask(async () => {
       // https://docs.cloud.coinbase.com/exchange/reference/exchangerestapi_getproductcandles
-      const response = await fetch('/api/btc-usd-candles');
+      const response = await fetch('/api/trader-dashboard/btc-usd-candles');
       const data = await response.json();
       if (data instanceof Array) {
         /**
@@ -69,7 +69,7 @@ export const TraderDashboard = (props) => {
       }
     });
     queueMicrotask(async () => {
-      const response = await fetch('/api/local-exchange-rates');
+      const response = await fetch('/api/trader-dashboard/local-exchange-rates');
       const data = await response.json();
       if (data instanceof Object) {
         if (data.markets instanceof Array) {
@@ -96,7 +96,7 @@ export const TraderDashboard = (props) => {
       }
     });
     queueMicrotask(async () => {
-      const response = await fetch('/api/foreign-exchange-rates');
+      const response = await fetch('/api/trader-dashboard/foreign-exchange-rates');
       const data = await response.json();
       if (data instanceof Object) {
         if (data.rates instanceof Object) {

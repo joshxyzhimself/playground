@@ -6,6 +6,7 @@
   "dependencies": {
     "mime-types": "^2.1.35",
     "node-fetch": "^3.3.0",
+    "sharp": "^0.31.3",
     "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.19.0"
   },
   "scripts": {

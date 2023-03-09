@@ -20,7 +20,7 @@ export const ImageUploader = (props) => {
   // read from file
   const read_file = React.useCallback((file) => {
     const reader = new FileReader();
-    reader.onloadend = async (event) => {
+    reader.addEventListener('loadend', async (event) => {
       /**
          * @type {ArrayBuffer}
          */
@@ -30,7 +30,18 @@ export const ImageUploader = (props) => {
 
       console.log({ file, file_buffer });
 
-    };
+      const form_data = new FormData();
+      form_data.append('file', file);
+
+      const response = await fetch('/api/image-uploader/images', {
+        method: 'POST',
+        body: form_data,
+      });
+
+      console.log(response.status);
+      console.log(response.headers);
+
+    });
     reader.readAsArrayBuffer(file);
     file_input_ref.current.value = '';
   }, []);
