@@ -116,8 +116,14 @@ app.post('/api/image-uploader/images', httpserv.use(async (response, request) =>
   if (fs.existsSync(converted_path) === false) {
     fs.writeFileSync(converted_path, converted_buffer);
   }
-  console.log({ file_metadata, converted_metadata, converted_hash, converted_basename, converted_path, converted_url });
-  response.json = { file_metadata, converted_metadata, converted_hash };
+  response.json = {
+    file_metadata,
+    converted_metadata,
+    converted_hash,
+    converted_basename,
+    converted_path,
+    converted_url,
+  };
 }));
 
 /**

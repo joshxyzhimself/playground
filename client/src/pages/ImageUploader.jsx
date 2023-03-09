@@ -21,26 +21,45 @@ export const ImageUploader = (props) => {
   const read_file = React.useCallback((file) => {
     const reader = new FileReader();
     reader.addEventListener('loadend', async (event) => {
-      /**
+      try {
+        /**
          * @type {ArrayBuffer}
          */
-      // @ts-ignore
-      const file_arraybuffer = event.target.result;
-      const file_buffer = new Uint8Array(file_arraybuffer);
+        // @ts-ignore
+        const file_arraybuffer = event.target.result;
+        const file_buffer = new Uint8Array(file_arraybuffer);
 
-      console.log({ file, file_buffer });
+        console.log({ file, file_buffer });
 
-      const form_data = new FormData();
-      form_data.append('file', file);
+        const form_data = new FormData();
+        form_data.append('file', file);
+        const response = await fetch('/api/image-uploader/images', {
+          method: 'POST',
+          body: form_data,
+        });
 
-      const response = await fetch('/api/image-uploader/images', {
-        method: 'POST',
-        body: form_data,
-      });
+        console.log(response.status);
+        console.log(response.headers);
 
-      console.log(response.status);
-      console.log(response.headers);
-
+        if (response.status >= 400) {
+          const response_text = await response.text();
+          throw new Error(response_text);
+        }
+        if (response.status >= 200) {
+          if (response.headers.has('content-type') === true) {
+            if (response.headers.get('content-type').includes('application/json') === true) {
+              const response_json = await response.json();
+              console.log(response_json);
+              return;
+            }
+          }
+          const response_text = await response.text();
+          console.log(response_text);
+        }
+      } catch (e) {
+        console.error(e);
+        alert(e.message);
+      }
     });
     reader.readAsArrayBuffer(file);
     file_input_ref.current.value = '';
