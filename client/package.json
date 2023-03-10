@@ -23,6 +23,7 @@
     "autoprefixer": "^10.4.8",
     "luxon": "^3.0.4",
     "postcss": "^8.4.16",
+    "pretty-bytes": "^6.1.0",
     "react": "^18.2.0",
     "react-apexcharts": "^1.4.0",
     "react-dom": "^18.2.0",

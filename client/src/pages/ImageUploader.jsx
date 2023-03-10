@@ -1,6 +1,7 @@
 // @ts-check
 
 import React from 'react';
+import pb from 'pretty-bytes';
 
 /**
  * @type {import('./ImageUploader').ImageUploader}
@@ -12,10 +13,9 @@ export const ImageUploader = (props) => {
   const file_input_ref = React.useRef(null);
 
   /**
-   * @type {import('./ImageUploader').State<string>}
+   * @type {import('./ImageUploader').State<import('./ImageUploader').result>}
    */
-  const [link, set_link] = React.useState('');
-
+  const [result, set_result] = React.useState(null);
 
   // read from file
   const read_file = React.useCallback((file) => {
@@ -50,6 +50,7 @@ export const ImageUploader = (props) => {
             if (response.headers.get('content-type').includes('application/json') === true) {
               const response_json = await response.json();
               console.log(response_json);
+              set_result(response_json);
               return;
             }
           }
@@ -65,10 +66,6 @@ export const ImageUploader = (props) => {
     file_input_ref.current.value = '';
   }, []);
 
-  React.useEffect(() => {
-
-  }, []);
-
   return (
     <div style={{ padding: 8 }}>
       <div className="p-4">
@@ -81,30 +78,67 @@ export const ImageUploader = (props) => {
           Anonymous image uploader supporting modern image formats. Applies MozJPEG which improves JPEG compression efficiency achieving higher visual quality and smaller file sizes at the same time.
         </div>
 
-        <div className="w-32">
-          <button
-            onClick={() => {
-              if (file_input_ref.current instanceof Object) {
-                if (file_input_ref.current.click instanceof Function) {
-                  file_input_ref.current.click();
-                }
-              }
-            }}
-            type="button"
-          >
-            Select Image
-          </button>
-          <input
-            type="file"
-            className="hidden"
-            ref={file_input_ref}
-            onChange={(e) => {
-              const [file] = e.target.files;
-              read_file(file);
-            }}
-            accept="image/*"
-          />
-        </div>
+        { result instanceof Object ? (
+          <div className="m-2 p-2">
+            <div className="m-2 p-2 h-48 w-96 bg-indigo-200 rounded">
+              <img className="h-full w-full object-scale-down" alt="result" src={result.converted_url} />
+            </div>
+            <div className="m-2 p-2 w-96 bg-indigo-50 rounded">
+              <div className="p-1 w-full text-left text-xs font-light">
+                { `Original file: ${pb(result.file_metadata.size)}, ${result.file_metadata.format}` }
+              </div>
+              <div className="p-1 w-full text-left text-xs font-light">
+                { `Converted file: ${pb(result.converted_metadata.size)}, ${result.converted_metadata.format}` }
+              </div>
+              <textarea className="p-1 w-full bg-slate-50 resize-none" rows={4} value={window.location.origin.concat(result.converted_url)} readOnly />
+              <div className="flex flex-col gap-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    navigator.clipboard.writeText(window.location.origin.concat(result.converted_url));
+                  }}
+                >
+                  copy link
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    set_result(null);
+                  }}
+                >
+                  upload another image
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="m-2 p-2">
+            <div className="m-2 p-2 w-96 bg-indigo-50 rounded">
+              <button
+                type="button"
+                onClick={() => {
+                  if (file_input_ref.current instanceof Object) {
+                    if (file_input_ref.current.click instanceof Function) {
+                      file_input_ref.current.click();
+                    }
+                  }
+                }}
+              >
+                select image
+              </button>
+              <input
+                type="file"
+                className="hidden"
+                ref={file_input_ref}
+                onChange={(e) => {
+                  const [file] = e.target.files;
+                  read_file(file);
+                }}
+                accept="image/*"
+              />
+            </div>
+          </div>
+        ) }
 
         <div className="px-1 py-2">
           <hr />
