@@ -90,7 +90,7 @@ export const ImageUploader = (props) => {
               <div className="p-1 w-full text-left text-xs font-light">
                 { `Converted file: ${pb(result.converted_metadata.size)}, ${result.converted_metadata.format}` }
               </div>
-              <textarea className="p-1 w-full bg-slate-50 resize-none" rows={2} value={window.location.origin.concat(result.converted_url)} readOnly />
+              <textarea className="p-1 w-full bg-slate-50 resize-none" rows={3} value={window.location.origin.concat(result.converted_url)} readOnly />
               <div className="flex flex-col gap-1">
                 <button
                   type="button"
