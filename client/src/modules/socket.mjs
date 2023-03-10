@@ -36,7 +36,6 @@ export class Socket extends EventTarget {
   }
 
   connect () {
-    this.dispatchEvent(new Event('connecting'));
     this.#client = new WebSocket(this.#url);
     this.#client.addEventListener('open', (event) => {
       if (this.#client.readyState === 1) {
@@ -62,29 +61,25 @@ export class Socket extends EventTarget {
   }
 
   /**
-   * @param {object} data
+   * @param {ArrayBuffer|Record<string, any>} data
    */
   send (data) {
-    assert(data instanceof Object, 'Invalid message, cannot send.');
+    assert(data instanceof ArrayBuffer || data instanceof Object, 'Invalid message, cannot send.');
     assert(this.#client instanceof WebSocket, 'WebSocket is disconnected, cannot send.');
     assert(this.#client.readyState === 1, 'WebSocket is disconnected, cannot send.');
-    this.#client.send(JSON.stringify(data));
-  }
-
-  /**
-   * @param {ArrayBuffer} data
-   */
-  send_arraybuffer (data) {
-    assert(data instanceof ArrayBuffer, 'Invalid message, cannot send.');
-    assert(this.#client instanceof WebSocket, 'WebSocket is disconnected, cannot send.');
-    assert(this.#client.readyState === 1, 'WebSocket is disconnected, cannot send.');
-    this.#client.send(data);
+    if (data instanceof ArrayBuffer) {
+      this.#client.send(data);
+      return;
+    }
+    if (data instanceof Object) {
+      this.#client.send(JSON.stringify(data));
+      return;
+    }
   }
 
   close () {
     if (this.#client instanceof WebSocket) {
       if (this.#client.readyState === 1) {
-        this.dispatchEvent(new Event('closing'));
         this.#client.close(1000);
       }
     }
