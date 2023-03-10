@@ -80,10 +80,10 @@ export const ImageUploader = (props) => {
 
         { result instanceof Object ? (
           <div className="p-2 w-full sm:w-4/5 md:w-2/3">
-            <div className="p-2 h-48 w-full bg-indigo-200 rounded">
+            <div className="my-2 p-2 h-48 w-full bg-indigo-200 rounded">
               <img className="h-full w-full object-scale-down" alt="result" src={result.converted_url} />
             </div>
-            <div className="p-2 w-full bg-indigo-50 rounded">
+            <div className="my-2 p-2 w-full bg-indigo-50 rounded">
               <div className="p-1 w-full text-left text-xs font-light">
                 { `Original file: ${pb(result.file_metadata.size)}, ${result.file_metadata.format}` }
               </div>
@@ -113,7 +113,7 @@ export const ImageUploader = (props) => {
           </div>
         ) : (
           <div className="p-2 w-full sm:w-4/5 md:w-2/3">
-            <div className="p-2 w-full bg-indigo-50 rounded">
+            <div className="my-2 p-2 w-full bg-indigo-50 rounded">
               <button
                 type="button"
                 onClick={() => {
