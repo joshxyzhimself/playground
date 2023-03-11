@@ -150,7 +150,6 @@ export const TraderDashboard = (props) => {
                 <React.Fragment>
 
                   <div className="h-64 overflow-y-auto">
-
                     <div className="w-full p-1">
                       <div className="p-1 bg-slate-800 rounded" >
                         <div className="ubuntu-mono text-right text-base font-normal text-white">

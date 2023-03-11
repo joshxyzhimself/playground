@@ -42,7 +42,7 @@ export const Home = (props) => {
                   JWT Encoder
                 </div>
                 <div className="ubuntu-mono text-left text-sm font-light text-slate-50">
-                  Encodes the header and the payload into a JSON Web Token using the HS256 algorithm.
+                  JSON Web Token HS256 Encoder. Encodes the header and the payload into a token, using the Base64-encoded secret.
                 </div>
               </div>
             </Link>
@@ -55,7 +55,7 @@ export const Home = (props) => {
                   JWT Decoder
                 </div>
                 <div className="ubuntu-mono text-left text-sm font-light text-slate-50">
-                  Decodes the header and payload from a JSON Web Token. Verifies the HS256 algorithm signature if the Base64-encoded secret is provided.
+                  JSON Web Token HS256 Decoder. Decodes the header and the payload from a token, verifies the signature using the Base64-encoded secret.
                 </div>
               </div>
             </Link>
@@ -68,7 +68,7 @@ export const Home = (props) => {
                   Image Uploader
                 </div>
                 <div className="ubuntu-mono text-left text-sm font-light text-slate-50">
-                  Anonymous image uploader supporting modern image formats. Applies MozJPEG which improves JPEG compression efficiency achieving higher visual quality and smaller file sizes at the same time.
+                  Image uploader for modern image formats. Applies MozJPEG which improves JPEG compression efficiency achieving higher visual quality and smaller file sizes at the same time.
                 </div>
               </div>
             </Link>

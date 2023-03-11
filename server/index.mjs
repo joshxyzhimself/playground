@@ -5,7 +5,7 @@ import url from 'url';
 import path from 'path';
 import assert from 'assert';
 import crypto from 'crypto';
-import sharp from 'sharp';
+import { default as sharp } from 'sharp';
 import fetch from 'node-fetch';
 import * as httpserv from './httpserv/index.mjs';
 import on_exit from './httpserv/on_exit.mjs';

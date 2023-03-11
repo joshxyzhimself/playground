@@ -98,7 +98,7 @@ export const JwtEncoder = (props) => {
         </div>
 
         <div className="p-1 w-full sm:w-3/4 md:w-2/3 text-left text-base font-light">
-          Encodes the header and the payload into a JSON Web Token using the HS256 algorithm.
+          JSON Web Token HS256 Encoder. Encodes the header and the payload into a token, using the Base64-encoded secret.
         </div>
 
         <div className="w-full flex flex-row flex-wrap justify-start items-start">
