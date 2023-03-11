@@ -25,10 +25,10 @@ export const Home = (props) => {
           <div className="w-full md:w-1/2 lg:w-1/3 p-1">
             <Link history={history} href="/trader-dashboard">
               <div className="p-2 bg-slate-800 rounded" >
-                <div className="ubuntu-mono text-left text-xl font-normal text-white">
+                <div className="text-left text-xl font-normal text-white">
                   Trader Dashboard
                 </div>
-                <div className="ubuntu-mono text-left text-sm font-light text-slate-50">
+                <div className="text-left text-sm font-light text-slate-50">
                   Shows your current network information, the latest BTC-USD candlestick charts, and the latest intra-day mid-market rates for both local crypto markets and foreign fiat markets.
                 </div>
               </div>
@@ -38,10 +38,10 @@ export const Home = (props) => {
           <div className="w-full md:w-1/2 lg:w-1/3 p-1">
             <Link history={history} href="/jwt-encoder">
               <div className="p-2 bg-slate-800 rounded" >
-                <div className="ubuntu-mono text-left text-xl font-normal text-white">
+                <div className="text-left text-xl font-normal text-white">
                   JWT Encoder
                 </div>
-                <div className="ubuntu-mono text-left text-sm font-light text-slate-50">
+                <div className="text-left text-sm font-light text-slate-50">
                   JSON Web Token HS256 Encoder. Encodes the header and the payload into a token, using the Base64-encoded secret.
                 </div>
               </div>
@@ -51,10 +51,10 @@ export const Home = (props) => {
           <div className="w-full md:w-1/2 lg:w-1/3 p-1">
             <Link history={history} href="/jwt-decoder">
               <div className="p-2 bg-slate-800 rounded" >
-                <div className="ubuntu-mono text-left text-xl font-normal text-white">
+                <div className="text-left text-xl font-normal text-white">
                   JWT Decoder
                 </div>
-                <div className="ubuntu-mono text-left text-sm font-light text-slate-50">
+                <div className="text-left text-sm font-light text-slate-50">
                   JSON Web Token HS256 Decoder. Decodes the header and the payload from a token, verifies the signature using the Base64-encoded secret.
                 </div>
               </div>
@@ -64,10 +64,10 @@ export const Home = (props) => {
           <div className="w-full md:w-1/2 lg:w-1/3 p-1">
             <Link history={history} href="/image-uploader">
               <div className="p-2 bg-slate-800 rounded" >
-                <div className="ubuntu-mono text-left text-xl font-normal text-white">
+                <div className="text-left text-xl font-normal text-white">
                   Image Uploader
                 </div>
-                <div className="ubuntu-mono text-left text-sm font-light text-slate-50">
+                <div className="text-left text-sm font-light text-slate-50">
                   Image uploader for modern image formats. Applies MozJPEG which improves JPEG compression efficiency achieving higher visual quality and smaller file sizes at the same time.
                 </div>
               </div>
