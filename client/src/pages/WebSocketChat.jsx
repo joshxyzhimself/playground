@@ -1,6 +1,7 @@
 // @ts-check
 
 import React from 'react';
+import assert from '../modules/assert.mjs';
 import Socket from '../modules/socket.mjs';
 
 /**
@@ -53,6 +54,8 @@ export const WebSocketChat = (props) => {
        * [ ] trim and validate message
        */
       console.log({ name, message });
+      assert(name.trim().length > 0, 'Invalid name length.');
+      assert(message.trim().length > 0, 'Invalid message length.');
     } catch (e) {
       console.error(e);
       alert(e.message);
@@ -75,31 +78,36 @@ export const WebSocketChat = (props) => {
           <div className="chatbox">
 
           </div>
-          <div className="flex flex-row justify-start items-center gap-1">
+          <div className="w-full">
             <form
+              className="w-full flex flex-col sm:flex-row justify-start items-center"
               onSubmit={(e) => {
                 e.preventDefault();
                 queueMicrotask(send);
               }}
             >
-              <div id="name" className="">
+              <div className="p-1 w-full sm:w-32">
                 <input
+                  className="w-full"
                   type="text"
                   placeholder="Name"
                   value={name}
                   onChange={(e) => set_name(e.target.value)}
                 />
               </div>
-              <div id="message" className="">
+              <div className="p-1 w-full sm:flex-grow">
                 <input
+                  className="w-full"
                   type="text"
                   placeholder="Message"
                   value={message}
                   onChange={(e) => set_message(e.target.value)}
                 />
               </div>
-              <div id="send" className="">
-
+              <div className="p-1 w-full sm:w-32">
+                <button type="submit" >
+                  Send
+                </button>
               </div>
             </form>
           </div>
