@@ -11,6 +11,7 @@ import TraderDashboard from './pages/TraderDashboard';
 import JwtEncoder from './pages/JwtEncoder';
 import JwtDecoder from './pages/JwtDecoder';
 import ImageUploader from './pages/ImageUploader';
+import WebSocketChat from './pages/WebSocketChat';
 import SignIn from './pages/SignIn';
 import Status403 from './pages/Status403';
 import Status404 from './pages/Status404';
@@ -36,6 +37,9 @@ const get_content = (history, session, set_session) => {
     }
     case '/image-uploader': {
       return (<ImageUploader history={history} />);
+    }
+    case '/websocket-chat': {
+      return (<WebSocketChat history={history} />);
     }
     case '/sign-in': {
       if (typeof session === 'string') {

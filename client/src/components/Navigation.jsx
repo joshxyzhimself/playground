@@ -23,6 +23,9 @@ export const Navigation = (props) => {
       <Link className="navigation-button" history={history} href="/image-uploader">
         Image Uploader
       </Link>
+      <Link className="navigation-button" history={history} href="/websocket-chat">
+        WebSocket Chat
+      </Link>
     </div>
   );
 };
