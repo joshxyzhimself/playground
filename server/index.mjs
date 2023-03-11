@@ -63,6 +63,20 @@ httpserv.serve({
   debug: false,
 });
 
+app.get('/api/trader-dashboard/ip-info', httpserv.use(async (response, request) => {
+  const ip = request.headers.get('x-forwarded-for') || 'json';
+  const external_api_url = `https://ipinfo.io/${ip}?token=24685cdbd4a1ac`;
+  if (cache.has(external_api_url) === false) {
+    console.log(`Playground: External API data cached for "${external_api_url}".`);
+    const res = await fetch(external_api_url);
+    const data = await res.json();
+    const item = { timestamp: Date.now(), data };
+    cache.set(external_api_url, item);
+  }
+  const item = cache.get(external_api_url);
+  response.json = item.data;
+}));
+
 app.get('/api/trader-dashboard/btc-usd-candles', httpserv.use(async (response, request) => {
   console.log(request);
   console.log(request.headers);

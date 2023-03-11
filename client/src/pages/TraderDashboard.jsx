@@ -36,7 +36,7 @@ export const TraderDashboard = (props) => {
   const [forex_rate_filter, set_forex_rate_filter] = React.useState('');
   React.useEffect(() => {
     queueMicrotask(async () => {
-      const response = await fetch('https://ipinfo.io/json?token=24685cdbd4a1ac');
+      const response = await fetch('/api/trader-dashboard/ip-info');
       const data = await response.json();
       set_network_info(data);
     });
