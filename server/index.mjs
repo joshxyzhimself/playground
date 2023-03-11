@@ -58,7 +58,7 @@ httpserv.serve({
     },
   ],
   exclude: ['/api/'],
-  debug: true,
+  debug: false,
 });
 
 app.get('/api/trader-dashboard/btc-usd-candles', httpserv.use(async (response, request) => {
