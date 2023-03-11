@@ -62,6 +62,7 @@ httpserv.serve({
 });
 
 app.get('/api/trader-dashboard/btc-usd-candles', httpserv.use(async (response, request) => {
+  console.log(request.remote_address, request.proxied_remote_address);
   const external_api_url = 'https://api.exchange.coinbase.com/products/BTC-USD/candles?granularity=86400';
   if (cache.has(external_api_url) === false) {
     console.log(`Playground: External API data cached for "${external_api_url}".`);
