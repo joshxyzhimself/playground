@@ -6,7 +6,8 @@ import Socket from '../modules/socket.mjs';
 
 /**
  * Coverage:
- * - [ ] user can connect websocket
+ * - [x] user can connect websocket when entering page
+ * - [x] user can disconnect websocket when leaving page
  * - [ ] user can set name
  * - [ ] user can set message
  * - [ ] user can send name and message
@@ -36,8 +37,31 @@ export const WebSocketChat = (props) => {
 
   React.useEffect(() => {
     // create and connect websocket
+    const protocol = window.location.protocol.replace('http', 'ws');
+    const url = `${protocol}//${window.location.host}/`;
+    const socket = new Socket(url);
+    socket.onopen = () => {
+      console.log('Socket open.');
+    };
+    socket.onmessage = (data) => {
+      console.log('Socket message.');
+      console.log({ data });
+    };
+    socket.onerror = () => {
+      console.log('Socket error.');
+    };
+    socket.onclose = (code, reason) => {
+      console.log('Socket close.');
+      console.log({ code, reason });
+    };
+    socket.onbackoff = (timeout) => {
+      console.log('Socket backoff.');
+      console.log({ timeout });
+    };
+    socket.open();
     return () => {
       // disconnect websocket
+      socket.close();
     };
   }, []);
 

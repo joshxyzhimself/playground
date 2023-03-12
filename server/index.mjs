@@ -43,6 +43,23 @@ const cache_interval = setInterval(() => {
 
 const app = httpserv.uws.App({});
 
+app.ws('/*', {
+  idleTimeout: 120,
+  maxBackpressure: 64 * 1024,
+  maxPayloadLength: 16 * 1024,
+  compression: httpserv.uws.DEDICATED_COMPRESSOR_4KB | httpserv.uws.DEDICATED_DECOMPRESSOR_4KB,
+  open: (ws) => {
+    console.log('WebSocket open.');
+    ws.send(JSON.stringify({ foo: 'bar' }));
+  },
+  message: (ws, message, is_binary) => {
+    console.log('WebSocket message.');
+  },
+  close: (ws, code, message) => {
+    console.log('WebSocket close.');
+  },
+});
+
 // i think we should replace /images with /
 // this way we can serve from __images and not __temp
 httpserv.serve({
