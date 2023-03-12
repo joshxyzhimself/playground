@@ -56,6 +56,9 @@ export const WebSocketChat = (props) => {
    */
   const [messages, set_messages] = React.useState([]);
 
+  /**
+   * @description This effect handles our connection and disconnection.
+   */
   React.useEffect(() => {
     const protocol = window.location.protocol.replace('http', 'ws');
     const url = `${protocol}//${window.location.host}/`;
@@ -77,6 +80,9 @@ export const WebSocketChat = (props) => {
     };
   }, []);
 
+  /**
+   * @description This effect handles our messages. Isolated to prevent useEffect mount-unmount loop bug.
+   */
   React.useEffect(() => {
     if (socket instanceof Socket) {
       socket.onmessage = (data) => {
