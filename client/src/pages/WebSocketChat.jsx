@@ -8,10 +8,11 @@ import Socket from '../modules/socket.mjs';
  * Coverage:
  * - [x] user can connect websocket when entering page
  * - [x] user can disconnect websocket when leaving page
- * - [ ] 1. user sends { action: 'join', name }.
- * - [ ] 3. server sends { action: 'accept' } or { action: 'reject' }
- * - [ ] 4. server sets user's name on server-side.
- * - [ ] 5. user semds { action: 'message', message }
+ * - [x] 1. user sends { action: 'join', name }.
+ * - [x] 2. server sends { action: 'accept' }
+ * - [x] 3. user semds { action: 'message', message }
+ * - [x] 4. server broadcasts message properly
+ * - [ ] 5. user sees rendered messages properly
  * - [ ] user can send bot commands
  * - [ ] user can receive bot command responses
  * - [ ] user can see chat history

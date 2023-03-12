@@ -8,6 +8,7 @@ import crypto from 'crypto';
 import { default as sharp } from 'sharp';
 import fetch from 'node-fetch';
 import * as httpserv from './httpserv/index.mjs';
+import * as casefold from './casefold/index.mjs';
 import on_exit from './httpserv/on_exit.mjs';
 import env from './httpserv/env.mjs';
 
@@ -55,6 +56,12 @@ const names = new Map();
  */
 const websockets = new Map();
 
+/**
+ * @type {Set<string>}
+ * @description We use a Set of case-folded names to accurately prevent duplicates, such as Josh and josh.
+ */
+const names_casefolded = new Set();
+
 app.ws('/*', {
   idleTimeout: 120,
   maxBackpressure: 64 * 1024,
@@ -75,9 +82,12 @@ app.ws('/*', {
             try {
               assert(typeof data.name === 'string');
               const name = data.name.trim();
-              assert(name_rx.test(name) === true, 'Invalid name characters or length.');
+              const name_casefolded = casefold.full_casefold_normalize_nfkc(name);
+              assert(name_rx.test(name) === true, 'Invalid name.');
+              assert(names_casefolded.has(name_casefolded) === false, 'Invalid name, already used.');
               websockets.set(name, ws);
               names.set(ws, name);
+              names_casefolded.add(name_casefolded);
               ws.subscribe('broadcast');
               ws.send(JSON.stringify({ action: 'accept' }));
             } catch (e) {
@@ -121,8 +131,10 @@ app.ws('/*', {
     console.log({ code, message });
     if (names.has(ws) === true) {
       const name = names.get(ws);
+      const name_casefolded = casefold.full_casefold_normalize_nfkc(name);
       websockets.delete(name);
       names.delete(ws);
+      names_casefolded.delete(name_casefolded);
     }
   },
 });
