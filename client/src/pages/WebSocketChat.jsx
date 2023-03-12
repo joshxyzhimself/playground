@@ -27,9 +27,9 @@ export const WebSocketChat = (props) => {
   const { history } = props;
 
   /**
-   * @type {React.MutableRefObject<import('../modules/socket.mjs').Socket>}
+   * @type {import('./WebSocketChat').State<import('../modules/socket.mjs').Socket>}
    */
-  const socket = React.useRef(null);
+  const [socket, set_socket] = React.useState(null);
 
   /**
    * @type {import('./WebSocketChat').State<boolean>}
@@ -57,82 +57,85 @@ export const WebSocketChat = (props) => {
   const [messages, set_messages] = React.useState([]);
 
   React.useEffect(() => {
-    // create and connect websocket
     const protocol = window.location.protocol.replace('http', 'ws');
     const url = `${protocol}//${window.location.host}/`;
-    socket.current = new Socket(url);
-    socket.current.onopen = () => {
+    const next_socket = new Socket(url);
+    set_socket(next_socket);
+    next_socket.onopen = () => {
       set_connected(true);
     };
-    socket.current.onmessage = (data) => {
-      try {
-        console.log('Socket message.');
-        console.log({ data });
-        if (data instanceof ArrayBuffer) {
-          return;
-        }
-        if (data instanceof Object) {
-          assert(typeof data.action === 'string');
-          switch (data.action) {
-            case 'accept': {
-              set_accepted(true);
-              break;
-            }
-            case 'error': {
-              assert(typeof data.message === 'string');
-              throw new Error(data.message);
-            }
-            case 'message': {
-              console.log(data);
-              break;
-            }
-            default: {
-              break;
-            }
-          }
-        }
-      } catch (e) {
-        console.error(e);
-        alert(e.message);
-      }
-    };
-    socket.current.onclose = () => {
+    next_socket.onclose = () => {
       set_connected(false);
       set_name('');
       set_accepted(false);
       set_message('');
       set_messages([]);
     };
-    socket.current.open();
+    next_socket.open();
     return () => {
-      // disconnect websocket
-      socket.current.close();
+      next_socket.close();
     };
   }, []);
 
-  /**
-   * Bot commands:
-   * - /ip
-   * - /rates [base] [quote]
-   */
+  React.useEffect(() => {
+    if (socket instanceof Socket) {
+      socket.onmessage = (data) => {
+        try {
+          console.log('Socket message.');
+          console.log({ data });
+          if (data instanceof ArrayBuffer) {
+            return;
+          }
+          if (data instanceof Object) {
+            assert(typeof data.action === 'string');
+            switch (data.action) {
+              case 'accept': {
+                set_accepted(true);
+                break;
+              }
+              case 'error': {
+                assert(typeof data.message === 'string');
+                throw new Error(data.message);
+              }
+              case 'message': {
+                // @ts-ignore
+                set_messages([...messages, data]);
+                break;
+              }
+              default: {
+                break;
+              }
+            }
+          }
+        } catch (e) {
+          console.error(e);
+          alert(e.message);
+        }
+      };
+    }
+  }, [socket, messages]);
+
+  console.log({ messages });
 
   const join = React.useCallback(async () => {
     try {
-      socket.current.send({ action: 'join', name: name.trim() });
+      socket.send({ action: 'join', name: name.trim() });
+      set_name('');
     } catch (e) {
       console.error(e);
       alert(e.message);
     }
-  }, [name]);
+  }, [socket, name]);
 
   const send = React.useCallback(async () => {
     try {
-      socket.current.send({ action: 'message', text: message.trim() });
+      socket.send({ action: 'message', text: message.trim() });
+      set_message('');
     } catch (e) {
       console.error(e);
       alert(e.message);
     }
-  }, [message]);
+  }, [socket, message]);
 
   return (
     <div style={{ padding: 8 }}>
