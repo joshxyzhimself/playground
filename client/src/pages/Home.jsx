@@ -3,13 +3,33 @@
 import React from 'react';
 import Link from '../components/Link';
 
+// https://unsplash.com/photos/hCb3lIB8L8E
+
 /**
  * @type {import('./Home').Home}
  */
 export const Home = (props) => {
   const { history } = props;
   return (
-    <div style={{ padding: 8 }}>
+    <div>
+
+      <div className="flex flex-row justify-center items-center">
+        <div className="w-full sm:w-5/6 md:w-4/5 lg:w-2/3">
+          <div className="py-4">
+            <div className="p-1 text-center text-2xl font-bold text-slate-900">
+              Are you looking for a Solutions Architect?
+            </div>
+            <div className="p-1 text-center text-base font-medium text-slate-800">
+              If you are, read on and see if I&apos;m the right fit for you.
+            </div>
+            <div className="p-1 text-center text-xs font-light text-slate-600">
+              For a better browsing experience, press play for some music.
+            </div>
+
+          </div>
+        </div>
+      </div>
+
       <div className="p-4">
 
         <div className="p-1 text-left text-2xl font-medium">

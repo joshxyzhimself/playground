@@ -16,6 +16,8 @@ import SignIn from './pages/SignIn';
 import Status403 from './pages/Status403';
 import Status404 from './pages/Status404';
 
+import { useAudio } from 'react-use';
+
 import './App.css';
 
 /**
@@ -62,6 +64,10 @@ const App = () => {
    */
   const [session, set_session] = useLocalStorage('session', null);
 
+  const [audio, state, controls] = useAudio({
+    src: `${window.location.protocol}//${window.location.host}/logic-man-i-is.mp3`,
+  });
+
   const content = get_content(history, session, set_session);
 
   React.useEffect(() => {
@@ -96,6 +102,28 @@ const App = () => {
         </div>
       </div>
       <Navigation history={history} session={session} set_session={set_session} />
+      <div className="hidden">
+        { audio }
+        <div className="p-1 flex flex-row justify-center items-center">
+          <div className="p-1 border-2 border-dashed border-slate-200">
+            <div className="p-1 flex flex-row justify-center items-center">
+              <div className="p-1 w-16">
+                <button type="button" onClick={state.playing === false ? controls.play : controls.pause}>
+                  { state.playing === false ? 'Play' : 'Pause' }
+                </button>
+              </div>
+              <div className="p-1">
+                <div className="text-left text-base font-bold text-slate-900">
+                  man i is
+                </div>
+                <div className="text-left text-xs font-normal text-slate-800">
+                  Logic
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       <div>
         { content }
       </div>
