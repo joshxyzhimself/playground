@@ -43,20 +43,87 @@ const cache_interval = setInterval(() => {
 
 const app = httpserv.uws.App({});
 
+const name_rx = /^[A-Za-z0-9-_.]{2,24}$/;
+
+/**
+ * @type {Map<httpserv.uws.WebSocket<any>, string>}
+ */
+const names = new Map();
+
+/**
+ * @type {Map<string, httpserv.uws.WebSocket<any>>}
+ */
+const websockets = new Map();
+
 app.ws('/*', {
   idleTimeout: 120,
   maxBackpressure: 64 * 1024,
   maxPayloadLength: 16 * 1024,
-  compression: httpserv.uws.DEDICATED_COMPRESSOR_4KB | httpserv.uws.DEDICATED_DECOMPRESSOR_4KB,
+  compression: httpserv.uws.DISABLED,
   open: (ws) => {
     console.log('WebSocket open.');
-    ws.send(JSON.stringify({ foo: 'bar' }));
   },
-  message: (ws, message, is_binary) => {
-    console.log('WebSocket message.');
+  message: (ws, data_arraybuffer, is_binary) => {
+    try {
+      const data_buffer = Buffer.from(data_arraybuffer);
+      if (is_binary === false) {
+        const data = JSON.parse(data_buffer.toString());
+        assert(data instanceof Object);
+        assert(typeof data.action === 'string');
+        switch (data.action) {
+          case 'join': {
+            try {
+              assert(typeof data.name === 'string');
+              const name = data.name.trim();
+              assert(name_rx.test(name) === true, 'Invalid name characters or length.');
+              websockets.set(name, ws);
+              names.set(ws, name);
+              ws.subscribe('broadcast');
+              ws.send(JSON.stringify({ action: 'accept' }));
+            } catch (e) {
+              console.error(e);
+              ws.send(JSON.stringify({ action: 'error', message: e.message }));
+            }
+            break;
+          }
+          case 'message': {
+            try {
+              assert(names.has(ws) === true);
+              assert(typeof data.text === 'string');
+              /**
+               * Note that ws.publish excludes sender from recepients.
+               */
+              const broadcast_data = JSON.stringify({
+                name: names.get(ws),
+                action: data.action,
+                text: data.text,
+                timestamp: Date.now(),
+              });
+              ws.publish('broadcast', broadcast_data);
+              ws.send(broadcast_data);
+            } catch (e) {
+              console.error(e);
+              ws.send(JSON.stringify({ action: 'error', message: e.message }));
+            }
+            break;
+          }
+          default: {
+            break;
+          }
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    }
   },
   close: (ws, code, message) => {
     console.log('WebSocket close.');
+    console.log({ code, message });
+    if (names.has(ws) === true) {
+      const name = names.get(ws);
+      websockets.delete(name);
+      names.delete(ws);
+    }
   },
 });
 

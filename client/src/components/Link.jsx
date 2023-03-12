@@ -8,7 +8,6 @@ import React from 'react';
 export const Link = (props) => {
   const { className, children, history, target, href } = props;
   const inferred_target = target || '_self';
-  console.log({ history });
   return (
     <a
       className={className || ''}
