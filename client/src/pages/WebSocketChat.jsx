@@ -13,6 +13,8 @@ import Socket from '../modules/socket.mjs';
  * - [x] 3. user semds { action: 'message', message }
  * - [x] 4. server broadcasts message properly
  * - [ ] 5. user sees rendered messages properly
+ * - [ ] broadcast: user as joined the chat.
+ * - [ ] broadcast: user as left the chat.
  * - [ ] user can send bot commands
  * - [ ] user can receive bot command responses
  * - [ ] user can see chat history
