@@ -20,7 +20,7 @@ export const Home = (props) => {
               Are you looking for a Solutions Architect?
             </div>
             <div className="p-1 text-center text-base font-medium text-slate-800">
-              If you are, read on and see if I&apos;m the right fit for you.
+              If you are, read on and see if I&apos;m the right fit for your team.
             </div>
             <div className="p-1 text-center text-xs font-light text-slate-600">
               For a better browsing experience, press play for some music.
