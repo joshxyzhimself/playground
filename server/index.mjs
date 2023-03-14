@@ -67,7 +67,7 @@ app.ws('/*', {
   maxBackpressure: 64 * 1024,
   maxPayloadLength: 16 * 1024,
   compression: httpserv.uws.DISABLED,
-  open: (ws) => {
+  open: () => {
     console.log('WebSocket open.');
   },
   message: (ws, data_arraybuffer, is_binary) => {
@@ -188,7 +188,7 @@ app.get('/api/trader-dashboard/btc-usd-candles', httpserv.use(async (response, r
   response.json = item.data;
 }));
 
-app.get('/api/trader-dashboard/local-exchange-rates', httpserv.use(async (response, request) => {
+app.get('/api/trader-dashboard/local-exchange-rates', httpserv.use(async (response) => {
   const external_api_url = 'https://quote.coins.ph/v2/markets';
   if (cache.has(external_api_url) === false) {
     console.log(`Playground: External API data cached for "${external_api_url}".`);
@@ -201,7 +201,7 @@ app.get('/api/trader-dashboard/local-exchange-rates', httpserv.use(async (respon
   response.json = item.data;
 }));
 
-app.get('/api/trader-dashboard/foreign-exchange-rates', httpserv.use(async (response, request) => {
+app.get('/api/trader-dashboard/foreign-exchange-rates', httpserv.use(async (response) => {
   const external_api_url = 'https://openexchangerates.org/api/latest.json?prettyprint=false&app_id=647db71ea7d446d3a2bfa8b7fa18649c';
   if (cache.has(external_api_url) === false) {
     console.log(`Playground: External API data cached for "${external_api_url}".`);

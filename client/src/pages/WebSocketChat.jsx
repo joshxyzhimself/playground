@@ -37,7 +37,7 @@ export const WebSocketChat = (props) => {
   /**
    * @type {import('./WebSocketChat').State<boolean>}
    */
-  const [connected, set_connected] = React.useState(false);
+  const [connected, set_connected] = React.useState(null);
 
   /**
    * @type {import('./WebSocketChat').State<string>}
@@ -67,21 +67,46 @@ export const WebSocketChat = (props) => {
     const url = `${protocol}//${window.location.host}/`;
     const next_socket = new Socket(url);
     set_socket(next_socket);
-    next_socket.onopen = () => {
-      set_connected(true);
-    };
-    next_socket.onclose = () => {
-      set_connected(false);
-      set_name('');
-      set_accepted(false);
-      set_message('');
-      set_messages([]);
-    };
     next_socket.open();
     return () => {
       next_socket.close();
     };
   }, []);
+
+  /**
+   * @description This effect handles our messages. Isolated to prevent useEffect mount-unmount loop bug.
+   */
+  React.useEffect(() => {
+    if (socket instanceof Socket) {
+      socket.onopen = () => {
+        const system_message = {
+          name: 'System',
+          text: 'You have connected to the server.',
+          timestamp: Date.now(),
+        };
+        set_messages([...messages, system_message]);
+        set_connected(true);
+      };
+      socket.onclose = () => {
+        const system_message = {
+          name: 'System',
+          text: 'You have disconnected from the server.',
+          timestamp: Date.now(),
+        };
+        set_messages([...messages, system_message]);
+        set_connected(false);
+        set_name('');
+        set_accepted(false);
+        set_message('');
+      };
+    }
+    return () => {
+      if (socket instanceof Socket) {
+        socket.onopen = null;
+        socket.onclose = null;
+      }
+    };
+  }, [socket, messages]);
 
   /**
    * @description This effect handles our messages. Isolated to prevent useEffect mount-unmount loop bug.
@@ -122,6 +147,11 @@ export const WebSocketChat = (props) => {
         }
       };
     }
+    return () => {
+      if (socket instanceof Socket) {
+        socket.onmessage = null;
+      }
+    };
   }, [socket, messages]);
 
   console.log({ messages });
@@ -162,47 +192,39 @@ export const WebSocketChat = (props) => {
 
           <div className="m-1 p-1 w-full">
 
-            { connected === false && (
-              <React.Fragment>
-                <div className="p-1 border-l-2 border-red-200">
-                  <div className="p-1 w-fit text-left text-sm font-light bg-red-50 rounded">
-                    Disconnected
-                  </div>
-                  <div className="px-1 w-auto text-left text-xs font-normal">
-                    Status
-                  </div>
-                </div>
-              </React.Fragment>
-            ) }
-
-            { connected === true && (
-              <React.Fragment>
-                <div className="p-1 border-l-2 border-green-200">
-                  <div className="p-1 w-fit text-left text-sm font-light bg-green-50 rounded">
-                    Connected
-                  </div>
-                  <div className="px-1 w-auto text-left text-xs font-normal">
-                    Status
-                  </div>
-                </div>
-              </React.Fragment>
-            ) }
-
-            <div className="p-1 border-l-2 border-emerald-200">
-              <div className="p-1 w-fit text-left text-sm font-light bg-emerald-50 rounded">
-                Example message goes here.
+            <div className="p-1 border-l-2 border-indigo-200">
+              <div className="m-1 p-1 w-fit text-left text-xs font-light bg-indigo-50 rounded">
+                Hello there.
               </div>
-              <div className="px-1 w-auto text-left text-xs font-normal">
-                Alice &bull; HH:MM:SS
+              <div className="mx-1 px-1 w-auto text-left text-xs font-medium text-indigo-600">
+                Alice
               </div>
             </div>
 
             <div className="p-1 border-l-2 border-slate-200">
-              <div className="p-1 w-fit text-left text-sm font-light bg-slate-50 rounded">
-                Example message goes here.
+              <div className="m-1 p-1 w-fit text-left text-xs font-light bg-slate-50 rounded">
+                Hello there.
               </div>
-              <div className="px-1 w-auto text-left text-xs font-normal">
-                You &bull; HH:MM:SS
+              <div className="mx-1 px-1 w-auto text-left text-xs font-medium text-slate-600">
+                You
+              </div>
+            </div>
+
+            <div className="p-1 border-l-2 border-slate-200">
+              <div className="m-1 p-1 w-fit text-left text-xs font-light bg-emerald-50 rounded">
+                You have connected to the server.
+              </div>
+              <div className="m-1 p-1 w-fit text-left text-xs font-light bg-rose-50 rounded">
+                You have disconnected from the server.
+              </div>
+              <div className="m-1 p-1 w-fit text-left text-xs font-light bg-emerald-50 rounded">
+                Alice joined the chat.
+              </div>
+              <div className="m-1 p-1 w-fit text-left text-xs font-light bg-rose-50 rounded">
+                Alice left the chat.
+              </div>
+              <div className="mx-1 px-1 w-auto text-left text-xs font-medium text-slate-600">
+                System
               </div>
             </div>
 
