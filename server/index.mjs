@@ -47,6 +47,10 @@ const app = httpserv.uws.App({});
 const name_rx = /^[A-Za-z0-9-_.]{2,24}$/;
 
 /**
+ * @typedef {import('./index').message} message
+ */
+
+/**
  * @type {Map<httpserv.uws.WebSocket<any>, string>}
  */
 const names = new Map();
@@ -67,8 +71,9 @@ app.ws('/*', {
   maxBackpressure: 64 * 1024,
   maxPayloadLength: 16 * 1024,
   compression: httpserv.uws.DISABLED,
-  open: () => {
+  open: (ws) => {
     console.log('WebSocket open.');
+    ws.subscribe('broadcast');
   },
   message: (ws, data_arraybuffer, is_binary) => {
     try {
@@ -88,8 +93,31 @@ app.ws('/*', {
               websockets.set(name, ws);
               names.set(ws, name);
               names_casefolded.add(name_casefolded);
-              ws.subscribe('broadcast');
               ws.send(JSON.stringify({ action: 'accept' }));
+              /**
+               * @type {message}
+               */
+              const system_message = {
+                action: 'message',
+                name: 'System',
+                text: `${name} joined the chat.`,
+                timestamp: Date.now(),
+                system: true,
+                system_variant: 1,
+              };
+              ws.publish('broadcast', JSON.stringify(system_message));
+              /**
+               * @type {message}
+               */
+              const system_message_alt = {
+                action: 'message',
+                name: 'System',
+                text: `${name} (You) joined the chat.`,
+                timestamp: Date.now(),
+                system: true,
+                system_variant: 1,
+              };
+              ws.send(JSON.stringify(system_message_alt));
             } catch (e) {
               console.error(e);
               ws.send(JSON.stringify({ action: 'error', message: e.message }));
@@ -126,12 +154,22 @@ app.ws('/*', {
       console.error(e);
     }
   },
-  close: (ws, code, message) => {
-    console.log('WebSocket close.');
-    console.log({ code, message });
+  close: (ws) => {
     if (names.has(ws) === true) {
       const name = names.get(ws);
       const name_casefolded = casefold.full_casefold_normalize_nfkc(name);
+      /**
+       * @type {message}
+       */
+      const system_message = {
+        action: 'message',
+        name: 'System',
+        text: `${name} left the chat.`,
+        timestamp: Date.now(),
+        system: true,
+        system_variant: 0,
+      };
+      app.publish('broadcast', JSON.stringify(system_message));
       websockets.delete(name);
       names.delete(ws);
       names_casefolded.delete(name_casefolded);

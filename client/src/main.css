@@ -5,11 +5,10 @@
 input {
   @apply w-full p-1;
   @apply bg-slate-50;
-  @apply ring-1 ring-slate-400;
+  @apply border border-slate-200;
 }
 input:focus {
   @apply bg-white;
-  @apply ring-2 ring-slate-400;
 }
 button[type] {
   @apply w-full p-1;
@@ -20,6 +19,9 @@ button[type]:hover {
   @apply bg-slate-800 text-slate-100;
 }
 * {
+  @apply appearance-none outline-none;
+}
+*:focus {
   @apply appearance-none outline-none;
 }
 body {

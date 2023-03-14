@@ -5,6 +5,11 @@ import assert from '../modules/assert.mjs';
 import Socket from '../modules/socket.mjs';
 
 /**
+ * @typedef {import('./WebSocketChat').message} message
+ * @typedef {import('./WebSocketChat').message_group} message_group
+ */
+
+/**
  * Coverage:
  * - [x] user can connect websocket when entering page
  * - [x] user can disconnect websocket when leaving page
@@ -12,9 +17,9 @@ import Socket from '../modules/socket.mjs';
  * - [x] 2. server sends { action: 'accept' }
  * - [x] 3. user semds { action: 'message', message }
  * - [x] 4. server broadcasts message properly
- * - [ ] 5. user sees rendered messages properly
- * - [ ] broadcast: user as joined the chat.
- * - [ ] broadcast: user as left the chat.
+ * - [x] 5. user sees rendered messages properly
+ * - [x] broadcast: user as joined the chat.
+ * - [x] broadcast: user as left the chat.
  * - [ ] user can send bot commands
  * - [ ] user can receive bot command responses
  * - [ ] user can see chat history
@@ -55,9 +60,48 @@ export const WebSocketChat = (props) => {
   const [message, set_message] = React.useState('');
 
   /**
-   * @type {import('./WebSocketChat').State<import('./WebSocketChat').message[]>}
+   * @type {import('./WebSocketChat').State<message_group[]>}
    */
-  const [messages, set_messages] = React.useState([]);
+  const [message_groups, set_message_groups] = React.useState([]);
+
+
+  /**
+   * @param {message} next_message
+   */
+  const append_message = (next_message) => {
+    if (message_groups.length > 0) {
+      const last_message_group_index = message_groups.length - 1;
+      const last_message_group = message_groups[last_message_group_index];
+      if (last_message_group.name === next_message.name) {
+        /**
+         * @type {message_group}
+         */
+        const next_message_group = {
+          name: last_message_group.name,
+          messages: [...last_message_group.messages, next_message],
+          system: next_message.system,
+          timestamp: next_message.timestamp,
+        };
+        const next_message_groups = message_groups.slice();
+        next_message_groups[last_message_group_index] = next_message_group;
+        set_message_groups(next_message_groups);
+        return;
+      }
+    }
+    /**
+     * @type {message_group}
+     */
+    const next_message_group = {
+      name: next_message.name,
+      messages: [next_message],
+      system: next_message.system,
+      timestamp: next_message.timestamp,
+    };
+    const next_message_groups = message_groups.slice();
+    next_message_groups.push(next_message_group);
+    set_message_groups(next_message_groups);
+  };
+  const append_message_callback = React.useCallback(append_message, [message_groups]);
 
   /**
    * @description This effect handles our connection and disconnection.
@@ -78,35 +122,64 @@ export const WebSocketChat = (props) => {
    */
   React.useEffect(() => {
     if (socket instanceof Socket) {
-      socket.onopen = () => {
+      socket.onopening = () => {
+        /**
+         * @type {message}
+         */
         const system_message = {
+          action: 'message',
+          name: 'System',
+          text: 'Connecting..',
+          timestamp: Date.now(),
+          system: true,
+          system_variant: 2,
+        };
+        append_message_callback(system_message);
+      };
+      socket.onopen = () => {
+        /**
+         * @type {message}
+         */
+        const system_message = {
+          action: 'message',
           name: 'System',
           text: 'You have connected to the server.',
           timestamp: Date.now(),
+          system: true,
+          system_variant: 1,
         };
-        set_messages([...messages, system_message]);
+        append_message_callback(system_message);
         set_connected(true);
       };
       socket.onclose = () => {
-        const system_message = {
-          name: 'System',
-          text: 'You have disconnected from the server.',
-          timestamp: Date.now(),
-        };
-        set_messages([...messages, system_message]);
-        set_connected(false);
-        set_name('');
-        set_accepted(false);
-        set_message('');
+        if (connected === true) {
+          /**
+           * @type {message}
+           */
+          const system_message = {
+            action: 'message',
+            name: 'System',
+            text: 'You have disconnected from the server.',
+            timestamp: Date.now(),
+            system: true,
+            system_variant: 0,
+          };
+          append_message_callback(system_message);
+          set_connected(false);
+          set_name('');
+          set_accepted(false);
+          set_message('');
+        }
       };
     }
     return () => {
       if (socket instanceof Socket) {
+        socket.onopening = null;
         socket.onopen = null;
         socket.onclose = null;
       }
     };
-  }, [socket, messages]);
+  }, [socket, connected, append_message_callback]);
 
   /**
    * @description This effect handles our messages. Isolated to prevent useEffect mount-unmount loop bug.
@@ -115,8 +188,6 @@ export const WebSocketChat = (props) => {
     if (socket instanceof Socket) {
       socket.onmessage = (data) => {
         try {
-          console.log('Socket message.');
-          console.log({ data });
           if (data instanceof ArrayBuffer) {
             return;
           }
@@ -133,7 +204,7 @@ export const WebSocketChat = (props) => {
               }
               case 'message': {
                 // @ts-ignore
-                set_messages([...messages, data]);
+                append_message_callback(data);
                 break;
               }
               default: {
@@ -152,14 +223,12 @@ export const WebSocketChat = (props) => {
         socket.onmessage = null;
       }
     };
-  }, [socket, messages]);
-
-  console.log({ messages });
+  }, [socket, append_message_callback]);
 
   const join = React.useCallback(async () => {
     try {
       socket.send({ action: 'join', name: name.trim() });
-      set_name('');
+      set_name(name.trim());
     } catch (e) {
       console.error(e);
       alert(e.message);
@@ -184,7 +253,7 @@ export const WebSocketChat = (props) => {
           WebSocket Chat
         </div>
 
-        <div className="p-1 w-full sm:w-3/4 md:w-2/3 text-left text-base font-light">
+        <div className="p-1 w-full sm:w-3/4 md:w-2/3 text-left text-base font-normal">
           Old school chat room, with built-in bot commands.
         </div>
 
@@ -192,41 +261,81 @@ export const WebSocketChat = (props) => {
 
           <div className="m-1 p-1 w-full">
 
-            <div className="p-1 border-l-2 border-indigo-200">
-              <div className="m-1 p-1 w-fit text-left text-xs font-light bg-indigo-50 rounded">
-                Hello there.
-              </div>
-              <div className="mx-1 px-1 w-auto text-left text-xs font-medium text-indigo-600">
-                Alice
-              </div>
-            </div>
-
-            <div className="p-1 border-l-2 border-slate-200">
-              <div className="m-1 p-1 w-fit text-left text-xs font-light bg-slate-50 rounded">
-                Hello there.
-              </div>
-              <div className="mx-1 px-1 w-auto text-left text-xs font-medium text-slate-600">
-                You
-              </div>
-            </div>
-
-            <div className="p-1 border-l-2 border-slate-200">
-              <div className="m-1 p-1 w-fit text-left text-xs font-light bg-emerald-50 rounded">
-                You have connected to the server.
-              </div>
-              <div className="m-1 p-1 w-fit text-left text-xs font-light bg-rose-50 rounded">
-                You have disconnected from the server.
-              </div>
-              <div className="m-1 p-1 w-fit text-left text-xs font-light bg-emerald-50 rounded">
-                Alice joined the chat.
-              </div>
-              <div className="m-1 p-1 w-fit text-left text-xs font-light bg-rose-50 rounded">
-                Alice left the chat.
-              </div>
-              <div className="mx-1 px-1 w-auto text-left text-xs font-medium text-slate-600">
-                System
-              </div>
-            </div>
+            { message_groups.map((message_group, message_group_index) => {
+              if (message_group.system === true) {
+                return (
+                  <React.Fragment key={message_group_index}>
+                    <div className="p-1 border-l-4 border-slate-200">
+                      { message_group.messages.map((item) => {
+                        switch (item.system_variant) {
+                          case 0: {
+                            return (
+                              <div className="m-1 p-1 w-fit text-left text-xs font-normal bg-rose-100 rounded" key={item.timestamp}>
+                                { item.text }
+                              </div>
+                            );
+                          }
+                          case 1: {
+                            return (
+                              <div className="m-1 p-1 w-fit text-left text-xs font-normal bg-emerald-100 rounded" key={item.timestamp}>
+                                { item.text }
+                              </div>
+                            );
+                          }
+                          case 2: {
+                            return (
+                              <div className="m-1 p-1 w-fit text-left text-xs font-normal bg-amber-100 rounded" key={item.timestamp}>
+                                { item.text }
+                              </div>
+                            );
+                          }
+                          default: {
+                            return null;
+                          }
+                        }
+                      }) }
+                      <div className="mx-1 px-1 w-auto text-left text-xs font-medium text-slate-400">
+                        { message_group.name }
+                      </div>
+                    </div>
+                  </React.Fragment>
+                );
+              }
+              if (message_group.name === name) {
+                return (
+                  <React.Fragment key={message_group_index}>
+                    <div className="p-1 border-l-4 border-slate-200">
+                      { message_group.messages.map((item) => {
+                        return (
+                          <div className="m-1 p-1 w-fit text-left text-xs font-normal bg-slate-100 rounded" key={item.timestamp}>
+                            { item.text }
+                          </div>
+                        );
+                      }) }
+                      <div className="mx-1 px-1 w-auto text-left text-xs font-medium text-slate-400">
+                        { `${message_group.name} (You)` }
+                      </div>
+                    </div>
+                  </React.Fragment>
+                );
+              }
+              return (
+                <React.Fragment key={message_group_index}>
+                  <div className="p-1 border-l-4 border-indigo-200">
+                    { message_group.messages.map((item) => {
+                      return (
+                        <div className="m-1 p-1 w-fit text-left text-xs font-normal bg-indigo-100 rounded" key={item.timestamp}>
+                          { item.text }
+                        </div>
+                      );
+                    }) }
+                    <div className="mx-1 px-1 w-auto text-left text-xs font-medium text-indigo-400">
+                      { message_group.name }
+                    </div>
+                  </div>
+                </React.Fragment>
+              );
+            }) }
 
           </div>
 
@@ -245,10 +354,11 @@ export const WebSocketChat = (props) => {
                       <input
                         className="w-full"
                         type="text"
-                        placeholder="Name"
+                        placeholder="Enter your name"
                         value={name}
                         onChange={(e) => set_name(e.target.value)}
                         disabled={connected === false}
+                        autoFocus={true}
                       />
                     </div>
                     <div className="p-1 w-full sm:w-32">
@@ -276,9 +386,10 @@ export const WebSocketChat = (props) => {
                     <input
                       className="w-full"
                       type="text"
-                      placeholder="Message"
+                      placeholder="Enter your message"
                       value={message}
                       onChange={(e) => set_message(e.target.value)}
+                      autoFocus={true}
                     />
                   </div>
                   <div className="p-1 w-full sm:w-32">
@@ -297,7 +408,7 @@ export const WebSocketChat = (props) => {
           <hr />
         </div>
 
-        <div className="p-1 text-left text-xs font-light">
+        <div className="p-1 text-left text-xs font-normal">
           Crafted by @joshxyzhimself.
         </div>
 
