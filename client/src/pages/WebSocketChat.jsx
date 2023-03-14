@@ -20,6 +20,7 @@ import Socket from '../modules/socket.mjs';
  * - [x] 5. user sees rendered messages properly
  * - [x] broadcast: user as joined the chat.
  * - [x] broadcast: user as left the chat.
+ * - [ ] mobile responsiveness
  * - [ ] user can send bot commands
  * - [ ] user can receive bot command responses
  * - [ ] user can see chat history
