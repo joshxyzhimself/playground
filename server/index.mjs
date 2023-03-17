@@ -66,6 +66,22 @@ const websockets = new Map();
  */
 const names_casefolded = new Set();
 
+/**
+ * @param {httpserv.uws.WebSocket<any>} ws
+ */
+const unicast_users = (ws) => {
+  assert(ws instanceof Object);
+  const users = Array.from(names_casefolded.values());
+  const data = JSON.stringify({ action: 'users', users });
+  ws.send(data);
+};
+
+const broadcast_users = () => {
+  const users = Array.from(names_casefolded.values());
+  const data = JSON.stringify({ action: 'users', users });
+  app.publish('broadcast', data);
+};
+
 app.ws('/*', {
   idleTimeout: 120,
   maxBackpressure: 64 * 1024,
@@ -74,6 +90,7 @@ app.ws('/*', {
   open: (ws) => {
     console.log('WebSocket open.');
     ws.subscribe('broadcast');
+    unicast_users(ws);
   },
   message: (ws, data_arraybuffer, is_binary) => {
     try {
@@ -94,22 +111,12 @@ app.ws('/*', {
               names.set(ws, name);
               names_casefolded.add(name_casefolded);
               ws.send(JSON.stringify({ action: 'accept' }));
+              process.nextTick(broadcast_users);
+
               /**
                * @type {message}
                */
-              const system_message = {
-                action: 'message',
-                name: 'System',
-                text: `${name} joined the chat.`,
-                timestamp: Date.now(),
-                system: true,
-                system_variant: 1,
-              };
-              ws.publish('broadcast', JSON.stringify(system_message));
-              /**
-               * @type {message}
-               */
-              const system_message_alt = {
+              const system_message_unicast = {
                 action: 'message',
                 name: 'System',
                 text: `${name} (You) joined the chat.`,
@@ -117,7 +124,21 @@ app.ws('/*', {
                 system: true,
                 system_variant: 1,
               };
-              ws.send(JSON.stringify(system_message_alt));
+              ws.send(JSON.stringify(system_message_unicast));
+
+              /**
+               * @type {message}
+               */
+              const system_message_broadcast = {
+                action: 'message',
+                name: 'System',
+                text: `${name} joined the chat.`,
+                timestamp: Date.now(),
+                system: true,
+                system_variant: 1,
+              };
+              ws.publish('broadcast', JSON.stringify(system_message_broadcast));
+
             } catch (e) {
               console.error(e);
               ws.send(JSON.stringify({ action: 'error', message: e.message }));
@@ -173,6 +194,7 @@ app.ws('/*', {
       websockets.delete(name);
       names.delete(ws);
       names_casefolded.delete(name_casefolded);
+      process.nextTick(broadcast_users);
     }
   },
 });

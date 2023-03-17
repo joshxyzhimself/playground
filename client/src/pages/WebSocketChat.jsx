@@ -21,6 +21,11 @@ import Socket from '../modules/socket.mjs';
  * - [x] broadcast: user as joined the chat.
  * - [x] broadcast: user as left the chat.
  * - [ ] mobile responsiveness
+ *
+ * Note:
+ * - Other features are cut-off to let us focus on other important things.
+ *
+ * Someday:
  * - [ ] user can send bot commands
  * - [ ] user can receive bot command responses
  * - [ ] user can see chat history
@@ -43,7 +48,12 @@ export const WebSocketChat = (props) => {
   /**
    * @type {import('./WebSocketChat').State<boolean>}
    */
-  const [connected, set_connected] = React.useState(null);
+  const [connected, set_connected] = React.useState(false);
+
+  /**
+   * @type {import('./WebSocketChat').State<string[]>}
+   */
+  const [users, set_users] = React.useState([]);
 
   /**
    * @type {import('./WebSocketChat').State<string>}
@@ -151,6 +161,7 @@ export const WebSocketChat = (props) => {
         };
         append_message_callback(system_message);
         set_connected(true);
+        set_users([]);
       };
       socket.onclose = () => {
         if (connected === true) {
@@ -167,6 +178,7 @@ export const WebSocketChat = (props) => {
           };
           append_message_callback(system_message);
           set_connected(false);
+          set_users([]);
           set_name('');
           set_accepted(false);
           set_message('');
@@ -195,6 +207,11 @@ export const WebSocketChat = (props) => {
           if (data instanceof Object) {
             assert(typeof data.action === 'string');
             switch (data.action) {
+              case 'users': {
+                assert(data.users instanceof Array);
+                set_users(data.users);
+                break;
+              }
               case 'accept': {
                 set_accepted(true);
                 break;
@@ -339,6 +356,16 @@ export const WebSocketChat = (props) => {
             }) }
 
           </div>
+
+          { connected === true && (
+            <React.Fragment>
+              <div className="m-1 p-1 w-full">
+                <div className="mx-1 px-1 w-auto text-left text-xs font-medium text-slate-400">
+                  { `Active users (${users.length}) : ${users.join(', ')}` }
+                </div>
+              </div>
+            </React.Fragment>
+          ) }
 
           { accepted === false && (
             <React.Fragment>
