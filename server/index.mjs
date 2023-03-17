@@ -149,6 +149,7 @@ app.ws('/*', {
             try {
               assert(names.has(ws) === true);
               assert(typeof data.text === 'string');
+              assert(data.text.length > 0, 'Invalid message.');
               /**
                * Note that ws.publish excludes sender from recepients.
                */
