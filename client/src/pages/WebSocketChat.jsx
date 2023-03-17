@@ -3,6 +3,7 @@
 import React from 'react';
 import assert from '../modules/assert.mjs';
 import Socket from '../modules/socket.mjs';
+import Link from '../components/Link';
 
 /**
  * @typedef {import('./WebSocketChat').message} message
@@ -39,6 +40,16 @@ import Socket from '../modules/socket.mjs';
 export const WebSocketChat = (props) => {
 
   const { history } = props;
+
+  /**
+   * @type {React.MutableRefObject<HTMLInputElement>}
+   */
+  const name_input_ref = React.useRef(null);
+
+  /**
+   * @type {React.MutableRefObject<HTMLInputElement>}
+   */
+  const message_input_ref = React.useRef(null);
 
   /**
    * @type {import('./WebSocketChat').State<import('../modules/socket.mjs').Socket>}
@@ -243,6 +254,24 @@ export const WebSocketChat = (props) => {
     };
   }, [socket, append_message_callback]);
 
+  React.useEffect(() => {
+    if (connected === true) {
+      if (accepted === true) {
+        if (message_input_ref.current instanceof Object) {
+          if (message_input_ref.current.focus instanceof Function) {
+            message_input_ref.current.focus();
+          }
+        }
+      } else {
+        if (name_input_ref.current instanceof Object) {
+          if (name_input_ref.current.focus instanceof Function) {
+            name_input_ref.current.focus();
+          }
+        }
+      }
+    }
+  }, [connected, accepted]);
+
   const join = React.useCallback(async () => {
     try {
       socket.send({ action: 'join', name: name.trim() });
@@ -272,7 +301,15 @@ export const WebSocketChat = (props) => {
         </div>
 
         <div className="p-1 w-full sm:w-3/4 md:w-2/3 text-left text-base font-normal">
-          Old school chat room, with built-in bot commands.
+          WebSocket chat room. Users can set their name. Users cannot have the same name. Users are notified on who joins and leaves. Users can see who are currently in the chat room. System and User messages are displayed nicely.
+        </div>
+
+        <div className="p-1 w-48">
+          <Link history={history} href="/websocket-chat" target="_blank">
+            <button type="button">
+              Open in new tab
+            </button>
+          </Link>
         </div>
 
         <div className="p-4">
@@ -367,68 +404,63 @@ export const WebSocketChat = (props) => {
             </React.Fragment>
           ) }
 
-          { accepted === false && (
-            <React.Fragment>
-              <div className="m-1 p-1 w-full">
-                <div className="flex flex-col justify-start items-start">
-                  <form
-                    className="w-full flex flex-col sm:flex-row justify-start items-center"
-                    onSubmit={(e) => {
-                      e.preventDefault();
-                      queueMicrotask(join);
-                    }}
-                  >
-                    <div className="p-1 w-full sm:flex-grow">
-                      <input
-                        className="w-full"
-                        type="text"
-                        placeholder="Enter your name"
-                        value={name}
-                        onChange={(e) => set_name(e.target.value)}
-                        disabled={connected === false}
-                        autoFocus={true}
-                      />
-                    </div>
-                    <div className="p-1 w-full sm:w-32">
-                      <button type="submit" disabled={connected === false}>
-                        Join
-                      </button>
-                    </div>
-                  </form>
+          <div className="m-1 p-1 w-full">
+            <div className="flex flex-col justify-start items-start">
+              <form
+                className="w-full flex flex-col sm:flex-row justify-start items-center"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  queueMicrotask(join);
+                }}
+              >
+                <div className="p-1 w-full sm:flex-grow">
+                  <input
+                    ref={name_input_ref}
+                    className="w-full"
+                    type="text"
+                    placeholder="Enter your name"
+                    value={name}
+                    onChange={(e) => set_name(e.target.value)}
+                    disabled={connected === false || accepted === true}
+                    autoFocus={true}
+                  />
                 </div>
-              </div>
-            </React.Fragment>
-          ) }
+                <div className="p-1 w-full sm:w-32">
+                  <button type="submit" disabled={connected === false || accepted === true }>
+                    Join
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
 
-          { accepted === true && (
-            <React.Fragment>
-              <div className="p-1 w-full">
-                <form
-                  className="w-full flex flex-col sm:flex-row justify-start items-center"
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    queueMicrotask(send);
-                  }}
-                >
-                  <div className="p-1 w-full sm:flex-grow">
-                    <input
-                      className="w-full"
-                      type="text"
-                      placeholder="Enter your message"
-                      value={message}
-                      onChange={(e) => set_message(e.target.value)}
-                      autoFocus={true}
-                    />
-                  </div>
-                  <div className="p-1 w-full sm:w-32">
-                    <button type="submit" >
-                      Send
-                    </button>
-                  </div>
-                </form>
+          <div className="mx-1 px-1 w-full">
+            <form
+              className="w-full flex flex-col sm:flex-row justify-start items-center"
+              onSubmit={(e) => {
+                e.preventDefault();
+                queueMicrotask(send);
+              }}
+            >
+              <div className="p-1 w-full sm:flex-grow">
+                <input
+                  ref={message_input_ref}
+                  className="w-full"
+                  type="text"
+                  placeholder="Enter your message"
+                  value={message}
+                  onChange={(e) => set_message(e.target.value)}
+                  disabled={connected === false || accepted === false}
+                  autoFocus={true}
+                />
               </div>
-            </React.Fragment>
-          ) }
+              <div className="p-1 w-full sm:w-32">
+                <button type="submit" disabled={connected === false || accepted === false}>
+                  Send
+                </button>
+              </div>
+            </form>
+          </div>
 
         </div>
 
