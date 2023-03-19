@@ -44,39 +44,17 @@ docker compose up --build --force-recreate --detach
 docker compose logs --tail=100 --follow
 ```
 
-#### Rebundling web
+#### Relaunch all services
 
 ```sh
-docker compose up --build --force-recreate --no-deps --detach web
+git pull && docker compose up --build --force-recreate --detach
 ```
 
-## Tasks
+#### Relaunch one service
 
-#### Completed
-
-- HTTP Server serves bundled client correctly.
-- Docker HTTP Server serves bundled client correctly.
-- Docker serves Server and Client correctly.
-- Trader Dashboard
-- JWT Encoder
-- JWT Decoder
-
-#### Planned / In Progress
-
-- HOTP TOTP Playground
-- Image compression with Sharp, serving with server.serve().
-- Basic Authentication API with PostgreSQL and PostgREST.
-- Basic CRUD with PostgreSQL and PostgREST.
-
-#### Under Review
-
-- None
-
-#### References
-
-- React Suspense
-  - https://reactjs.org/docs/react-api.html#reactsuspense
-  - https://beta.reactjs.org/reference/react/Suspense
+```sh
+git pull && docker compose up --build --force-recreate --no-deps --detach playground-playground
+```
 
 #### License
 

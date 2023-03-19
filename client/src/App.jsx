@@ -115,9 +115,17 @@ const App = () => {
         <div className="p-1 flex flex-row justify-between items-center">
 
           <div className="px-1 flex flex-row justify-start items-center">
-            <div className="p-1 w-16">
-              <button type="button" onClick={state.playing === false ? controls.play : controls.pause}>
-                { state.playing === false ? 'Play' : 'Pause' }
+            <div className="p-1 w-auto">
+              <button className="w-auto" type="button" onClick={state.playing === false ? controls.play : controls.pause}>
+                { state.playing === false ? (
+                  <svg className="w-4 h-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" />
+                  </svg>
+                ) : (
+                  <svg className="w-4 h-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 5.25v13.5m-7.5-13.5v13.5" />
+                  </svg>
+                ) }
               </button>
             </div>
             <div className="p-1">
@@ -125,7 +133,7 @@ const App = () => {
                 Ditto
               </div>
               <div className="text-left text-xs font-light text-slate-800">
-                New Jeans
+                NewJeans
               </div>
             </div>
           </div>

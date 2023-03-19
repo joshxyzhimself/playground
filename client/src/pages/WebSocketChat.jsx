@@ -122,6 +122,7 @@ export const WebSocketChat = (props) => {
     const next_message_groups = message_groups.slice();
     next_message_groups.push(next_message_group);
     set_message_groups(next_message_groups);
+
   };
   const append_message_callback = React.useCallback(append_message, [message_groups]);
 
@@ -258,8 +259,13 @@ export const WebSocketChat = (props) => {
     if (connected === true) {
       if (accepted === true) {
         if (message_input_ref.current instanceof Object) {
-          if (message_input_ref.current.focus instanceof Function) {
-            message_input_ref.current.focus();
+          if (message_input_ref.current !== document.activeElement) {
+            if (message_input_ref.current.focus instanceof Function) {
+              message_input_ref.current.focus();
+            }
+          }
+          if (message_input_ref.current.scrollIntoView instanceof Function) {
+            message_input_ref.current.scrollIntoView();
           }
         }
       } else {
@@ -270,7 +276,7 @@ export const WebSocketChat = (props) => {
         }
       }
     }
-  }, [connected, accepted]);
+  }, [connected, accepted, message_groups]);
 
   const join = React.useCallback(async () => {
     try {
