@@ -124,7 +124,7 @@ const App = () => {
               <div className="text-left text-sm font-bold text-slate-900">
                 man i is
               </div>
-              <div className="text-left text-xs font-normal text-slate-800">
+              <div className="text-left text-xs font-light text-slate-800">
                 Logic
               </div>
             </div>
