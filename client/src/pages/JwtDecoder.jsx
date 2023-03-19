@@ -172,15 +172,6 @@ export const JwtDecoder = (props) => {
           </div>
 
         </div>
-
-        <div className="px-1 py-2">
-          <hr />
-        </div>
-
-        <div className="p-1 text-left text-xs font-light">
-          Crafted by @joshxyzhimself.
-        </div>
-
       </div>
     </div>
   );

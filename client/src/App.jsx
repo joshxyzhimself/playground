@@ -6,6 +6,7 @@ import { useLocalStorage } from './modules/useLocalStorage.mjs';
 import * as hs256 from './modules/hs256.mjs';
 
 import Navigation from './components/Navigation';
+import Link from './components/Link';
 
 const Home = React.lazy(() => import('./pages/Home'));
 const TraderDashboard = React.lazy(() => import('./pages/TraderDashboard'));
@@ -103,32 +104,40 @@ const App = () => {
         </div>
       </div>
       <Navigation history={history} session={session} set_session={set_session} />
-      <div>
+      <div className="pb-16">
         <React.Suspense fallback={null}>
           { content }
         </React.Suspense>
       </div>
-      <div className="hidden">
+      <div className="fixed bottom-0 w-full h-auto w-full bg-slate-50 border-t-2 border-slate-200 shadow">
         { audio }
-        <div className="p-1 flex flex-row justify-center items-center">
-          <div className="p-1 border-2 border-dashed border-slate-200">
-            <div className="p-1 flex flex-row justify-center items-center">
-              <div className="p-1 w-16">
-                <button type="button" onClick={state.playing === false ? controls.play : controls.pause}>
-                  { state.playing === false ? 'Play' : 'Pause' }
-                </button>
+
+        <div className="p-1 flex flex-row justify-between items-center">
+
+          <div className="px-1 flex flex-row justify-start items-center">
+            <div className="p-1 w-16">
+              <button type="button" onClick={state.playing === false ? controls.play : controls.pause}>
+                { state.playing === false ? 'play' : 'pause' }
+              </button>
+            </div>
+            <div className="p-1">
+              <div className="text-left text-sm font-bold text-slate-900">
+                man i is
               </div>
-              <div className="p-1">
-                <div className="text-left text-base font-bold text-slate-900">
-                  man i is
-                </div>
-                <div className="text-left text-xs font-normal text-slate-800">
-                  Logic
-                </div>
+              <div className="text-left text-xs font-normal text-slate-800">
+                Logic
               </div>
             </div>
           </div>
+
+          <Link history={history} href="https://github.com/joshxyzhimself" target="_blank">
+            <div className="px-1 text-left text-xs font-normal text-slate-800">
+              @joshxyzhimself
+            </div>
+          </Link>
+
         </div>
+
       </div>
     </div>
   );

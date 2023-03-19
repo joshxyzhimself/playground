@@ -138,6 +138,7 @@ export const Home = (props) => {
               .
             </div>
           </div>
+
           <div className="py-4">
             <div className="p-1 text-center text-base font-medium text-slate-800">
               Contact
@@ -147,15 +148,6 @@ export const Home = (props) => {
             </div>
           </div>
 
-        </div>
-      </div>
-
-      <div className="p-4">
-        <div className="px-1 py-4">
-          <hr />
-        </div>
-        <div className="p-1 text-left text-xs font-light">
-          Crafted by @joshxyzhimself.
         </div>
       </div>
     </div>
