@@ -117,7 +117,7 @@ const App = () => {
           <div className="px-1 flex flex-row justify-start items-center">
             <div className="p-1 w-16">
               <button type="button" onClick={state.playing === false ? controls.play : controls.pause}>
-                { state.playing === false ? 'play' : 'pause' }
+                { state.playing === false ? 'Play' : 'Pause' }
               </button>
             </div>
             <div className="p-1">
