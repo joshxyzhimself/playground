@@ -17,10 +17,10 @@ export const Home = (props) => {
         <div className="w-full sm:w-5/6 md:w-4/5 lg:w-2/3">
 
           <div className="py-4">
-            <div className="p-1 text-center text-2xl font-bold text-slate-900">
+            <div className="p-1 text-left text-2xl font-bold text-slate-900">
               Are you looking for a Software Developer?
             </div>
-            <div className="p-1 text-center text-base font-medium text-slate-800">
+            <div className="p-1 text-left text-base font-medium text-slate-800">
               If you are, read on and see if I&apos;m the right fit for your team.
             </div>
           </div>

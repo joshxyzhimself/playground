@@ -6,15 +6,16 @@ import { useLocalStorage } from './modules/useLocalStorage.mjs';
 import * as hs256 from './modules/hs256.mjs';
 
 import Navigation from './components/Navigation';
-import Home from './pages/Home';
-import TraderDashboard from './pages/TraderDashboard';
-import JwtEncoder from './pages/JwtEncoder';
-import JwtDecoder from './pages/JwtDecoder';
-import ImageUploader from './pages/ImageUploader';
-import WebSocketChat from './pages/WebSocketChat';
-import SignIn from './pages/SignIn';
-import Status403 from './pages/Status403';
-import Status404 from './pages/Status404';
+
+const Home = React.lazy(() => import('./pages/Home'));
+const TraderDashboard = React.lazy(() => import('./pages/TraderDashboard'));
+const JwtEncoder = React.lazy(() => import('./pages/JwtEncoder'));
+const JwtDecoder = React.lazy(() => import('./pages/JwtDecoder'));
+const ImageUploader = React.lazy(() => import('./pages/ImageUploader'));
+const WebSocketChat = React.lazy(() => import('./pages/WebSocketChat'));
+const SignIn = React.lazy(() => import('./pages/SignIn'));
+const Status403 = React.lazy(() => import('./pages/Status403'));
+const Status404 = React.lazy(() => import('./pages/Status404'));
 
 import { useAudio } from 'react-use';
 
@@ -102,6 +103,11 @@ const App = () => {
         </div>
       </div>
       <Navigation history={history} session={session} set_session={set_session} />
+      <div>
+        <React.Suspense fallback={null}>
+          { content }
+        </React.Suspense>
+      </div>
       <div className="hidden">
         { audio }
         <div className="p-1 flex flex-row justify-center items-center">
@@ -123,9 +129,6 @@ const App = () => {
             </div>
           </div>
         </div>
-      </div>
-      <div>
-        { content }
       </div>
     </div>
   );
