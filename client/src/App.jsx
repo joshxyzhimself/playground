@@ -67,7 +67,7 @@ const App = () => {
   const [session, set_session] = useLocalStorage('session', null);
 
   const [audio, state, controls] = useAudio({
-    src: `${window.location.protocol}//${window.location.host}/logic-man-i-is.mp3`,
+    src: `${window.location.protocol}//${window.location.host}/ditto-new-jeans.mp3`,
   });
 
   const content = get_content(history, session, set_session);
@@ -122,10 +122,10 @@ const App = () => {
             </div>
             <div className="p-1">
               <div className="text-left text-sm font-bold text-slate-900">
-                man i is
+                Ditto
               </div>
               <div className="text-left text-xs font-light text-slate-800">
-                Logic
+                New Jeans
               </div>
             </div>
           </div>

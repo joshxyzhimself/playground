@@ -17,11 +17,50 @@ export const Home = (props) => {
         <div className="w-full sm:w-5/6 md:w-4/5 lg:w-2/3">
 
           <div className="py-4">
-            <div className="p-1 text-left text-2xl font-bold text-slate-900">
-              Are you looking for a Software Developer?
+            <div className="p-1 text-left text-2xl font-bold text-black">
+              Hi there, I&apos;m Josh.
             </div>
-            <div className="p-1 text-left text-base font-medium text-slate-800">
-              If you are, read on and see if I&apos;m the right fit for your team.
+            <div className="w-full sm:w-5/6 md:w-4/6">
+              <div className="p-1 text-left text-base font-light text-slate-900">
+                I&apos;m experienced with design, development, testing, and releasing of web apps. I enjoy writing software that solves my own problems.
+              </div>
+              <div className="p-1 text-left text-base font-light text-slate-900">
+                I can help you with the following:
+              </div>
+              <div className="p-1 text-left text-base font-light text-slate-900">
+                Front-end Web Development: HTML, CSS, JavaScript, React.js; Responsive Web Design; Search Engine Optimization; Web Performance Testing.
+              </div>
+              <div className="p-1 text-left text-base font-light text-slate-900">
+                Back-end Web Development: Node.js, Bash Scripting; Relational Databases (MySQL, PostgreSQL); NoSQL Databases (MongoDB, Redis); Search Databases (ElasticSearch, TypeSense); Cloud DNS, Compute, Storage, Networking (AWS, GCP, Azure)
+              </div>
+              <div className="text-left text-base font-light text-slate-900">
+                I have written and published spec-compliant implementations of the following:
+              </div>
+              <div className="text-left text-base font-light text-slate-900">
+                &bull; RFC 4180 CSV (Comma-Separated Values) Parser in JavaScript
+              </div>
+              <div className="text-left text-base font-light text-slate-900">
+                &bull; RFC 4226 HOTP (HMAC-Based One-Time Password) Module in JavaScript
+              </div>
+              <div className="text-left text-base font-light text-slate-900">
+                &bull; RFC 6238 TOTP (Time-Based One-Time Password) Module in JavaScript
+              </div>
+              <div className="text-left text-base font-light text-slate-900">
+                &bull; RFC 7519 JWT (JSON Web Token) HS256 Encoder & Decoder in JavaScript
+              </div>
+              <div className="text-left text-base font-light text-slate-900">
+                &bull; Unicode Case-folding Algorithm in JavaScript
+              </div>
+              <div className="text-left text-base font-light text-slate-900">
+                &bull; Redis Client in JavaScript
+              </div>
+              <div className="text-left text-base font-light text-slate-900">
+                &bull; HTTP & WebSocket Server in JavaScript
+              </div>
+              <div className="text-left text-base font-light text-slate-900">
+                &bull; PSGC (Philippine Standard Geographic Code) Parser in JavaScript
+              </div>
+
             </div>
           </div>
 
