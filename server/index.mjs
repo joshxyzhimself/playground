@@ -212,7 +212,7 @@ httpserv.serve({
     },
     {
       url: '/images',
-      directory: __temp,
+      directory: __images,
       use_cache: env.get('PLAYGROUND_ENVIRONMENT') === 'production',
     },
   ],

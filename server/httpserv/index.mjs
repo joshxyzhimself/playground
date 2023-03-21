@@ -516,12 +516,17 @@ export const serve = (serve_options) => {
     }
     for (let i = 0, l = include.length; i < l; i += 1) {
       const record = include[i];
+      console.log({ request, record });
       if (request.url_dirname.startsWith(record.url) === true) {
         if (request.url_basename === '' || request.url_extname === '') {
           request.url_basename = 'index.html';
           request.url_extname = '.html';
         }
         request.file_pathname = path.join(record.directory, request.url_dirname, request.url_basename);
+        console.log(`record.directory: ${record.directory}`);
+        console.log(`request.url: ${request.url}`);
+        console.log(`request.url_dirname: ${request.url_dirname}`);
+        console.log(`request.url_basename: ${request.url_basename}`);
         if (record.headers instanceof Map) {
           record.headers.forEach((value, key) => {
             response.headers.set(key, value);
