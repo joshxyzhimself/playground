@@ -449,11 +449,30 @@ export const serve = (serve_options) => {
 
   app.get('/*', (res, req) => {
     const request = {
+      /**
+       * @type {string}
+       */
       url: req.getUrl(),
+      /**
+       * @type {string}
+       */
       url_dirname: null,
+      /**
+       * @type {string}
+       */
       url_basename: null,
+      /**
+       * @type {string}
+       */
       url_extname: null,
-      file_pathname: null,
+      /**
+       * @type {string}
+       */
+      url_relative: null,
+      /**
+       * @type {string}
+       */
+      url_absolute: null,
       headers: new InternalHeaders(),
     };
     request.url_dirname = path.dirname(request.url);
@@ -516,17 +535,23 @@ export const serve = (serve_options) => {
     }
     for (let i = 0, l = include.length; i < l; i += 1) {
       const record = include[i];
-      console.log({ request, record });
       if (request.url_dirname.startsWith(record.url) === true) {
+        /**
+         * Self-explanatory.
+         */
         if (request.url_basename === '' || request.url_extname === '') {
-          request.url_basename = 'index.html';
-          request.url_extname = '.html';
+          request.url = path.join(request.url, 'index.html');
+          request.url_dirname = path.dirname(request.url);
+          request.url_basename = path.basename(request.url);
+          request.url_extname = path.extname(request.url);
         }
-        request.file_pathname = path.join(record.directory, request.url_dirname, request.url_basename);
-        console.log(`record.directory: ${record.directory}`);
-        console.log(`request.url: ${request.url}`);
-        console.log(`request.url_dirname: ${request.url_dirname}`);
-        console.log(`request.url_basename: ${request.url_basename}`);
+        /**
+         * New fix:
+         * - Concepts of "base url", "base directory"
+         * - Concepts of "url relative path", "url absolute path"
+         */
+        request.url_relative = request.url.substring(record.url.length);
+        request.url_absolute = path.join(record.directory, request.url_relative);
         if (record.headers instanceof Map) {
           record.headers.forEach((value, key) => {
             response.headers.set(key, value);
@@ -535,19 +560,22 @@ export const serve = (serve_options) => {
         if (typeof record.use_cache === 'boolean') {
           response.use_cache = record.use_cache;
         }
+        if (debug === true) {
+          console.log({ record, request });
+        }
         break;
       }
     }
-    if (request.file_pathname === null) {
+    if (request.url_absolute === null) {
       req.setYield(true);
       return;
     }
 
     try {
 
-      fs.accessSync(request.file_pathname, fs.constants.R_OK);
+      fs.accessSync(request.url_absolute, fs.constants.R_OK);
 
-      const file_stat = fs.statSync(request.file_pathname);
+      const file_stat = fs.statSync(request.url_absolute);
       assert(file_stat.isFile() === true);
 
       const file_name = request.url_basename;
@@ -560,8 +588,8 @@ export const serve = (serve_options) => {
       }
 
       if (response.use_cache === true) {
-        if (cache.has(request.file_pathname) === false) {
-          const buffer = fs.readFileSync(request.file_pathname);
+        if (cache.has(request.url_absolute) === false) {
+          const buffer = fs.readFileSync(request.url_absolute);
           const buffer_hash = crypto.createHash('sha224').update(buffer).digest('hex');
           const gzip_buffer = zlib.gzipSync(buffer);
           const gzip_buffer_hash = crypto.createHash('sha224').update(gzip_buffer).digest('hex');
@@ -569,22 +597,22 @@ export const serve = (serve_options) => {
            * @type {import('./index').serve_cache_record}
            */
           const cache_record = { buffer, buffer_hash, gzip_buffer, gzip_buffer_hash };
-          cache.set(request.file_pathname, cache_record);
+          cache.set(request.url_absolute, cache_record);
         }
       }
 
       if (response.use_cache === true) {
-        const cached = cache.get(request.file_pathname);
+        const cached = cache.get(request.url_absolute);
         response.headers.set('ETag', cached.buffer_hash);
         response.body = cached.buffer;
       } else {
-        response.body = fs.readFileSync(request.file_pathname);
+        response.body = fs.readFileSync(request.url_absolute);
       }
 
       if (req.getHeader('accept-encoding').includes('gzip') === true) {
         response.headers.set('Content-Encoding', 'gzip');
         if (response.use_cache === true) {
-          const cached = cache.get(request.file_pathname);
+          const cached = cache.get(request.url_absolute);
           response.headers.set('ETag', cached.gzip_buffer_hash);
           response.body = cached.gzip_buffer;
         } else {
@@ -620,7 +648,7 @@ export const serve = (serve_options) => {
       return;
     } catch (e) {
       console.error(e);
-      if (fs.existsSync(request.file_pathname) === true) {
+      if (fs.existsSync(request.url_absolute) === true) {
         res.writeStatus('403');
         res.writeHeader('Content-Type', 'text/plain; charset=utf-8');
         res.write('403 Forbidden');

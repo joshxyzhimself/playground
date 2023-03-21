@@ -96,13 +96,13 @@ export interface serve_cache_record {
 }
 export interface serve_record {
   /**
-   * @description URL prefix to check.
-   * @example '/assets/'
+   * @description Base url.
+   * @example '/', '/images'
    */
   url: string;
   /**
-   * @description Local directory to serve files from.
-   * @example path.join(process.cwd(), '/assets/');
+   * @description Base directory.
+   * @example path.join(process.cwd(), '/images');
    */
   directory: string;
   /**

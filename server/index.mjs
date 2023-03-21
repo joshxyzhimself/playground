@@ -200,8 +200,6 @@ app.ws('/*', {
   },
 });
 
-// i think we should replace /images with /
-// this way we can serve from __images and not __temp
 httpserv.serve({
   app,
   include: [
