@@ -6,18 +6,18 @@ import path from 'path';
 import assert from 'assert';
 import crypto from 'crypto';
 import { default as sharp } from 'sharp';
-import fetch from 'node-fetch';
-import * as httpserv from './httpserv/index.mjs';
+import * as web from './web/index.mjs';
 import * as casefold from './casefold/index.mjs';
-import on_exit from './httpserv/on_exit.mjs';
-import env from './httpserv/env.mjs';
-
-console.log(env);
+import lenv from './process/lenv.mjs';
+import on_exit from './process/on_exit.mjs';
 
 const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const __temp = path.join(__dirname, '/temp/');
 const __images = path.join(__temp, '/images');
+
+const env = lenv(path.join(__dirname, '.env'));
+console.log({ env });
 
 if (fs.existsSync(__images) === false) {
   fs.mkdirSync(__images, { recursive: true });
@@ -42,7 +42,7 @@ const cache_interval = setInterval(() => {
   });
 }, one_minute);
 
-const app = httpserv.uws.App({});
+const app = web.uws.App({});
 
 const name_rx = /^[A-Za-z0-9-_.]{2,24}$/;
 
@@ -51,12 +51,12 @@ const name_rx = /^[A-Za-z0-9-_.]{2,24}$/;
  */
 
 /**
- * @type {Map<httpserv.uws.WebSocket<any>, string>}
+ * @type {Map<web.uws.WebSocket<any>, string>}
  */
 const names = new Map();
 
 /**
- * @type {Map<string, httpserv.uws.WebSocket<any>>}
+ * @type {Map<string, web.uws.WebSocket<any>>}
  */
 const websockets = new Map();
 
@@ -67,7 +67,7 @@ const websockets = new Map();
 const names_casefolded = new Set();
 
 /**
- * @param {httpserv.uws.WebSocket<any>} ws
+ * @param {web.uws.WebSocket<any>} ws
  */
 const unicast_users = (ws) => {
   assert(ws instanceof Object);
@@ -86,7 +86,7 @@ app.ws('/*', {
   idleTimeout: 120,
   maxBackpressure: 64 * 1024,
   maxPayloadLength: 16 * 1024,
-  compression: httpserv.uws.DISABLED,
+  compression: web.uws.DISABLED,
   open: (ws) => {
     console.log('WebSocket open.');
     ws.subscribe('broadcast');
@@ -200,7 +200,7 @@ app.ws('/*', {
   },
 });
 
-httpserv.serve({
+web.serve({
   app,
   include: [
     {
@@ -218,7 +218,7 @@ httpserv.serve({
   debug: false,
 });
 
-app.get('/api/trader-dashboard/ip-info', httpserv.use(async (response, request) => {
+app.get('/api/trader-dashboard/ip-info', web.use(async (response, request) => {
   const ip = request.headers.get('x-forwarded-for') || 'json';
   const external_api_url = `https://ipinfo.io/${ip}?token=24685cdbd4a1ac`;
   if (cache.has(external_api_url) === false) {
@@ -232,7 +232,7 @@ app.get('/api/trader-dashboard/ip-info', httpserv.use(async (response, request) 
   response.json = item.data;
 }));
 
-app.get('/api/trader-dashboard/btc-usd-candles', httpserv.use(async (response, request) => {
+app.get('/api/trader-dashboard/btc-usd-candles', web.use(async (response, request) => {
   console.log(request);
   console.log(request.headers);
   const external_api_url = 'https://api.exchange.coinbase.com/products/BTC-USD/candles?granularity=86400';
@@ -247,7 +247,7 @@ app.get('/api/trader-dashboard/btc-usd-candles', httpserv.use(async (response, r
   response.json = item.data;
 }));
 
-app.get('/api/trader-dashboard/local-exchange-rates', httpserv.use(async (response) => {
+app.get('/api/trader-dashboard/local-exchange-rates', web.use(async (response) => {
   const external_api_url = 'https://quote.coins.ph/v2/markets';
   if (cache.has(external_api_url) === false) {
     console.log(`Playground: External API data cached for "${external_api_url}".`);
@@ -260,7 +260,7 @@ app.get('/api/trader-dashboard/local-exchange-rates', httpserv.use(async (respon
   response.json = item.data;
 }));
 
-app.get('/api/trader-dashboard/foreign-exchange-rates', httpserv.use(async (response) => {
+app.get('/api/trader-dashboard/foreign-exchange-rates', web.use(async (response) => {
   const external_api_url = 'https://openexchangerates.org/api/latest.json?prettyprint=false&app_id=647db71ea7d446d3a2bfa8b7fa18649c';
   if (cache.has(external_api_url) === false) {
     console.log(`Playground: External API data cached for "${external_api_url}".`);
@@ -273,7 +273,7 @@ app.get('/api/trader-dashboard/foreign-exchange-rates', httpserv.use(async (resp
   response.json = item.data;
 }));
 
-app.post('/api/image-uploader/images', httpserv.use(async (response, request) => {
+app.post('/api/image-uploader/images', web.use(async (response, request) => {
   console.log(request);
   console.log(request.parts);
   assert(request.parts.length > 0);
@@ -306,7 +306,7 @@ app.post('/api/image-uploader/images', httpserv.use(async (response, request) =>
  * Response Headers Content-Type: text/plain
  * CURL Test: curl http://localhost:8080/api/example
  */
-app.get('/api/example', httpserv.use(async (response) => {
+app.get('/api/example', web.use(async (response) => {
   response.text = 'Hello world!';
 }));
 
@@ -317,21 +317,21 @@ app.get('/api/example', httpserv.use(async (response) => {
  * Response Headers Content-Type: application/json
  * CURL Test: curl -X POST http://localhost:8080/api/example
  */
-app.post('/api/example', httpserv.use(async (response, request) => {
+app.post('/api/example', web.use(async (response, request) => {
   response.json = { request };
 }));
 
 const port = 8080;
 
 console.log(`Playground: Listening at port ${port}..`);
-const token = await httpserv.http(app, httpserv.port_access_types.EXCLUSIVE, port);
+const token = await web.http(app, web.port_access_types.EXCLUSIVE, port);
 
 console.log('Playground: Listen OK.');
 
 on_exit(() => {
 
   console.log('Playground: Closing sockets..');
-  httpserv.uws.us_listen_socket_close(token);
+  web.uws.us_listen_socket_close(token);
   console.log('Playground: Close sockets OK.');
 
   console.log('Playground: Clearing cache interval..');

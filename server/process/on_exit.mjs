@@ -1,5 +1,9 @@
 // @ts-check
 
+/**
+ * On Process Exit
+ */
+
 import assert from 'assert';
 
 /**

@@ -115,7 +115,7 @@ export const port_access_types = { SHARED: 0, EXCLUSIVE: 1 };
 const file_cache = new Map();
 
 /**
- * @type {import('./index').apply}
+ * @type {import('./index').apply<any>}
  */
 const apply = async (res, middlewares, response, request) => {
   try {

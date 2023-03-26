@@ -81,7 +81,7 @@ export interface request<T> {
 
 export type uws_handler = (res: uws.HttpResponse, req: uws.HttpRequest) => void;
 export type middleware<T> = (response: response, request: request<T>) => Promise<void>;
-export type apply = (res: uws.HttpResponse, middlewares: middleware[], response: response, request: request<any>) => void;
+export type apply<T> = (res: uws.HttpResponse, middlewares: middleware<T>[], response: response, request: request<T>) => void;
 export type use = (...middlewares: middleware<any>[]) => uws_handler;
 export const use: use;
 
@@ -153,11 +153,11 @@ export const http: http;
 export type default_headers = Set<string>;
 export const default_headers: default_headers;
 
-export default interface httpserv {
+export default interface web {
   use: use;
   cors: cors;
   serve: serve;
   http: http;
-};
+}
 
 export * as uws from 'uWebSockets.js';
